@@ -1,0 +1,930 @@
+% HAIS 2020
+
+% surveys
+@article{Husak2018survey,
+  title={Survey of attack projection, prediction, and forecasting in cyber security},
+  author={Hus{\'a}k, Martin and Kom{\'a}rkov{\'a}, Jana and Bou-Harb, Elias and {\v{C}}eleda, Pavel},
+  ISSN={1553-877X},
+  journal={IEEE Communications Surveys \& Tutorials},
+  volume={21},
+  number={1},
+  pages={640--660},
+  year={2018},
+  publisher={IEEE}
+}
+@article{Sun2019,
+  title={Data-driven cybersecurity incident prediction: A survey},
+  author={Sun, Nan and Zhang, Jun and Rimba, Paul and Gao, Shang and Zhang, Leo Yu and Xiang, Yang},
+  journal={IEEE Commun. Surv. Tutor},
+  volume={21},
+  number={2},
+  pages={1744--1772},
+  year={2018},
+  publisher={IEEE}
+}
+@article{parihar2016survey,
+  title={Survey on intrusion detection using data mining methods},
+  author={Parihar, Lokendra Singh and Tiwari, Akhilesh},
+  journal={International Journal for Science and Advanced Research in Technology},
+  volume={3},
+  number={12},
+  pages={342--7},
+  year={2016}
+}
+
+%% This paper is based on the results of our previous research:
+@inproceedings{Sokol2018,
+  title={Prediction of attacks against Honeynet based on time series modeling},
+  author={Sokol, Pavol and Gajdo{\v{s}}, Andrej},
+  booktitle={Proceedings of the Computational Methods in Systems and Software},
+  pages={360--371},
+  year={2017},
+  organization={Springer}
+}
+@article{new_paper,
+  author={Husak, Martin and Bartos, Vaclav and Sokol, Pavol and Gajdos, Andrej},
+  title={Predictive Methods in Cyber Defense: Current Experience and Research Challenges},
+  journal={Future Generation Computer Systems},
+  year={Submitted},
+  publisher={Elsiever},
+} 
+@inproceedings{sokol2015study,
+  title={Study of attack using honeypots and honeynets lessons learned from time-oriented visualization},
+  author={Sokol, Pavol and Kleinov{\'a}, Lenka and Hus{\'a}k, Martin},
+  booktitle={IEEE International Conference on Computer as a Tool (EUROCON)},
+  pages={1--6},
+  year={2015},
+  organization={IEEE}
+}
+@article{bajtovs2018network,
+  title={Network Intrusion Detection with Threat Agent Profiling},
+  author={Bajto{\v{s}}, Tom{\'a}{\v{s}} and Gajdo{\v{s}}, Andrej and Kleinov{\'a}, Lenka and Lu{\v{c}}ivjansk{\'a}, Katar{\'\i}na and Sokol, Pavol},
+  journal={Security and Communication Networks},
+  volume={2018},
+  year={2018},
+  publisher={Hindawi}
+}
+
+
+% forecasting - metody
+@book{hyndman2018forecasting,
+  title={Forecasting: principles and practice},
+  author={Hyndman, Rob J and Athanasopoulos, George},
+  year={2018},
+  publisher={OTexts}
+}
+@book{box2015time,
+  title={Time series analysis: forecasting and control},
+  author={Box, George EP and Jenkins, Gwilym M and Reinsel, Gregory C and Ljung, Greta M},
+  year={2015},
+  publisher={John Wiley \& Sons}
+}
+@book{brockwell2016introduction,
+  title={Introduction to time series and forecasting},
+  author={Brockwell, Peter J and Davis, Richard A},
+  year={2016},
+  publisher={Springer}
+}
+@article{hyndman2006another,
+  title={Another look at measures of forecast accuracy},
+  author={Hyndman, Rob J. and Koehler, Anne B.},
+  journal={International journal of forecasting},
+  volume={22},
+  number={4},
+  pages={679--688},
+  year={2006},
+  publisher={Elsevier}
+}
+@book{hyndman2007automatic,
+  title={Automatic time series for forecasting: the forecast package for R},
+  author={Hyndman, Rob J. and Khandakar, Yeasmin and others},
+  number={6},
+  year={2007},
+  publisher={Monash University, Department of Econometrics and Business Statistics}
+}
+@article{hyndman2014measuring,
+  title={Measuring forecast accuracy},
+  author={Hyndman, Rob J},
+  journal={Business forecasting: Practical problems and solutions},
+  pages={177--183},
+  year={2014}
+}
+@article{Croston1972ForecastingAS,
+  title={Forecasting and stock control for intermittent demands},
+  author={Croston, J Do},
+  journal={Journal of the Operational Research Society},
+  volume={23},
+  number={3},
+  pages={289--303},
+  year={1972},
+  publisher={Taylor \& Francis}
+}
+@book{mehrotra2017anomaly,
+  title={Anomaly Detection Principles and Algorithms},
+  author={Mehrotra, Kishan G and Mohan, Chilukuri K and Huang, HuaMing},
+  isbn={9783319675268},
+  series={Terrorism, Security, and Computation},
+  year={2017},
+  publisher={Springer}
+}
+@article{Christou2015,
+  title={On count time series prediction},
+  author={Christou, Vasiliki and Fokianos, Konstantinos},
+  journal={Journal of Statistical Computation and Simulation},
+  volume={85},
+  number={2},
+  pages={357--373},
+  year={2015},
+  publisher={Taylor \& Francis}
+}
+@book{hendry1995dynamic,
+  title={Dynamic econometrics},
+  author={Hendry, David F and others},
+  isbn={9780198283164},
+  lccn={gb95034438},
+  series={Advanced texts in econometrics},
+  year={1995},
+  publisher={Oxford University Press on Demand}
+}
+
+% RW: detection of attacks rather than a prediction of attacks
+@inproceedings{condon2008analysis,
+  title={Analysis of computer security incident data using time series models},
+  author={Condon, Edward and He, Angela and Cukier, Michel},
+  booktitle={Software Reliability Engineering, 2008. ISSRE 2008. 19th International Symposium on},
+  pages={77--86},
+  year={2008},
+  organization={IEEE}
+}
+@inproceedings{liu2015cloudy,
+  title={Cloudy with a chance of breach: Forecasting cyber security incidents},
+  author={Liu, Yang and Sarabi, Armin and Zhang, Jing and Naghizadeh, Parinaz and Karir, Manish and Bailey, Michael and Liu, Mingyan},
+  booktitle={24th USENIX Security Symposium 15},
+  pages={1009--1024},
+  year={2015}
+} 
+@inproceedings{werner2017time,
+  title={Time series forecasting of cyber attack intensity},
+  author={Werner, Gordon and Yang, Shanchieh and McConky, Katie},
+  booktitle={Proceedings of the 12th Annual Conference on Cyber and Information Security Research},
+  pages={18},
+  year={2017},
+  organization={ACM}
+}
+@article{wei2012intrusion,
+  title={Intrusion detection scheme using traffic prediction for wireless industrial networks},
+  author={Wei, Min and Kim, Keecheon},
+  journal={J COMMUN NETW-S KOR},
+  volume={14},
+  number={3},
+  pages={310--318},
+  year={2012},
+  publisher={IEEE}
+}
+
+% RW: prediction of attack based on generalized ARCH (GARCH) models
+@inproceedings{tang2016exploiting,
+  title={Exploiting Vulnerability Disclosures: Statistical Framework and Case Study},
+  author={Tang, MingJian and Alazab, Mamoun and Luo, Yuxiu},
+  booktitle={Cybersecurity and Cyberforensics Conference (CCC), 2016},
+  pages={117--122},
+  year={2016},
+  organization={IEEE}
+}
+@article{zhan2015predicting,
+  title={Predicting cyber attack rates with extreme values},
+  author={Zhan, Zhenxin and Xu, Maochao and Xu, Shouhuai},
+  journal={IEEE Transactions on Information Forensics and Security},
+  volume={10},
+  number={8},
+  pages={1666--1677},
+  year={2015},
+  publisher={IEEE}
+}
+
+% RW: forecasting attack sources
+@article{soldo2011blacklisting,
+  title={Blacklisting recommendation system: Using spatio-temporal patterns to predict future attacks},
+  author={Soldo, Fabio and Le, Anh and Markopoulou, Athina},
+  journal={IEEE Journal on Selected Areas in Communications},
+  volume={29},
+  number={7},
+  pages={1423--1437},
+  year={2011},
+  publisher={IEEE}
+}
+
+% dataset
+@inproceedings{kacha2015warden,
+  title={Warden 3: Security event exchange redesign},
+  author={Kacha, Pavel and Kostenec, Michal and Kropacova, Andrea},
+  booktitle={19th International Conference on Computers: Recent Advances in Computer Science},
+  year={2015}
+}
+@inproceedings{kacha2013idea,
+  title={Idea: designing the data model for security event exchange},
+  author={Kacha, Pavel},
+  booktitle={Proceedings of the 17th International Conference on Computers: Recent Advances in Computer Science},
+  year={2013}
+}
+@inproceedings{kacha2014idea,
+  title={Idea: security event taxonomy mapping},
+  author={Kacha, Pavel},
+  booktitle={18th International Conference on Circuits, Systems, Communications and Computers},
+  year={2014}
+}
+
+
+
+
+% motivation
+@inproceedings{Endsley1988,
+  title={Situation awareness global assessment technique (SAGAT)},
+  author={Endsley, Mica R},
+  booktitle={Proceedings of the IEEE 1988 national aerospace and electronics conference},
+  pages={789--795},
+  year={1988},
+  organization={IEEE}
+}
+@incollection{Yang2014,
+  title={Attack projection},
+  author={Yang, Shanchieh Jay and Du, Haitao and Holsopple, Jared and Sudit, Moises},
+  booktitle={Cyber Defense and Situational Awareness},
+  pages={239--261},
+  year={2014},
+  publisher={Springer},
+  isbn="978-3-319-11391-3"
+}
+@inproceedings{Leau2015,
+  title={Network security situation prediction: a review and discussion},
+  author={Leau, Yu-Beng and Manickam, Selvakumar},
+  booktitle={International Conference on Soft Computing, Intelligence Systems, and Information Technology},
+  pages={424--435},
+  year={2015},
+  organization={Springer},
+  isbn="978-3-662-46742-8"
+}
+@incollection{Abdlhamed2017,
+  title={Intrusion prediction systems},
+  author={Abdlhamed, Mohamed and Kifayat, Kashif and Shi, Qi and Hurst, William},
+  booktitle={Information Fusion for Cyber-Security Analytics},
+  pages={155--174},
+  year={2017},
+  publisher={Springer}
+}
+% reactive approach to proactive
+@article{cho2020toward,
+  title={Toward proactive, adaptive defense: A survey on moving target defense},
+  author={Cho, Jin-Hee and Sharma, Dilli P and Alavizadeh, Hooman and Yoon, Seunghyun and Ben-Asher, Noam and Moore, Terrence J and Kim, Dong Seong and Lim, Hyuk and Nelson, Frederica F},
+  journal={IEEE Commun. Surv. Tutor},
+  volume={22},
+  number={1},
+  pages={709--745},
+  year={2020},
+  publisher={IEEE}
+}
+
+% Streaming methods
+@misc{mizell2017introduction,
+  title={Introduction to GPUs for Data Analytics},
+  author={Mizell, Eric and Biery, Roger},
+  year={2017},
+  publisher={O’Reilly}
+}
+@article{cugola2012processing,
+  title={Processing flows of information: From data stream to complex event processing},
+  author={Cugola, Gianpaolo and Margara, Alessandro},
+  journal={ACM Computing Surveys (CSUR)},
+  volume={44},
+  number={3},
+  pages={15},
+  year={2012},
+  publisher={ACM}
+}
+
+% Clustering methods
+
+@book{tuffery2011data,
+  title={Data mining and statistics for decision making},
+  author={Tuff{\'e}ry, St{\'e}phane},
+  year={2011},
+  publisher={John Wiley \& Sons}
+}
+
+% RW: k-means clustering method on network data
+@inproceedings{marchette1999statistical,
+  title={A Statistical Method for Profiling Network Traffic.},
+  author={Marchette, David J},
+  booktitle={Workshop on Intrusion Detection and Network Monitoring},
+  pages={119--128},
+  year={1999}
+}
+% RW: Research problem (They identified profiling based on multi-source information and lack of consensus on evaluation metrics as still open issues)
+@inproceedings{wang2019survey,
+  title={A survey on traffic-behavioral profiling of network end-target},
+  author={Wang, Mingda and Hu, Hangyu and Hu, Guangmin},
+  booktitle={Proceedings of the ACM Turing Celebration Conference-China},
+  pages={125},
+  year={2019},
+  organization={ACM}
+}
+
+% RW: profiles to detect anomalies
+@article{zang2019adaptive,
+  title={An Adaptive Profile-Based Approach for Detecting Anomalous Traffic in Backbone},
+  author={Zang, Xiao-Dong and Gong, Jian and Hu, Xiao-Yan},
+  journal={IEEE Access},
+  volume={7},
+  pages={56920--56934},
+  year={2019},
+  publisher={IEEE}
+}
+% RW: practical benefits of exploring the behaviour of network end-hosts
+@article{xu2014behavior,
+  title={Behavior analysis of internet traffic via bipartite graphs and one-mode projections},
+  author={Xu, Kuai and Wang, Feng and Gu, Lin},
+  journal={IEEE/ACM Transactions on Networking (TON)},
+  volume={22},
+  number={3},
+  pages={931--942},
+  year={2014},
+  publisher={IEEE Press}
+}
+% RW: The objective of the profiling module is to distinguish between legitimate and botnet traffic
+@inproceedings{hammerschmidt2016efficient,
+  title={Efficient learning of communication profiles from IP flow records},
+  author={Hammerschmidt, Christian and Marchal, Samuel and State, Radu and Pellegrino, Gaetano and Verwer, Sicco},
+  booktitle={2016 IEEE 41st Conference on Local Computer Networks (LCN)},
+  pages={559--562},
+  year={2016},
+  organization={IEEE}
+}
+% RW: Various clustering algorithms were tested (k-means, self-organising maps, expectation maximisation, and others
+@inproceedings{berti2017profiling,
+  title={Profiling DRDoS attacks with data analytics pipeline},
+  author={Berti-Equille, Laure and Zhauniarovich, Yury},
+  booktitle={Proceedings of the 2017 ACM on Conference on Information and Knowledge Management},
+  pages={1983--1986},
+  year={2017},
+  organization={ACM}
+}
+@inproceedings{jakalan2015profiling,
+  title={Profiling IP hosts based on traffic behavior},
+  author={Jakalan, Ahmad and Gong, Jian and Liu, Shangdong},
+  booktitle={2015 IEEE International Conference on Communication Software and Networks (ICCSN)},
+  pages={105--111},
+  year={2015},
+  organization={IEEE}
+}
+% RW: k-means on netflow
+@inproceedings{bakhshi2015user,
+  title={User traffic profiling},
+  author={Bakhshi, Taimur and Ghita, Bogdan},
+  booktitle={2015 Internet Technologies and Applications (ITA)},
+  pages={91--97},
+  year={2015},
+  organization={IEEE}
+}
+
+
+@article{sokol2015data,
+  title={Data collection and data analysis in honeypots and honeynets},
+  author={Sokol, Pavol and Pekar{\v{c}}ik, Patrik and Bajto{\v{s}}, Tom{\'a}{\v{s}}},
+  journal={Proceedings of the Security and Protection of Information. University of Defence},
+  year={2015}
+}
+@INPROCEEDINGS{pekarcik2019jisd,
+  author={P. {Pekarčík}},
+  booktitle={Zborník príspevkov zo 6. rošníka Jarnej internacializovanej školy doktorandov UPJŠ}, 
+  title={Spracovania kybernetických bezpečnostných údajov v reálnom čase}, 
+  year={2019}
+}
+@INPROCEEDINGS{9119254,
+  author={P. {Pekarčík} and T. {Kekeňák} and P. {Sokol} and T. {Mézešová}},
+  booktitle={2019 IEEE 15th International Scientific Conference on Informatics}, 
+  title={Real-time processing of cybersecurity system data for attacker profiling}, 
+  year={2019},
+  volume={},
+  number={},
+  pages={000207-000212}
+}
+
+% RW: annomaly detection on netflow 
+@inproceedings{bartovs2012network,
+  title={Network anomaly detection: comparison and real-time issues},
+  author={Barto{\v{s}}, V{\'a}clav and {\v{Z}}{\'a}dn{\'\i}k, Martin},
+  booktitle={IFIP International Conference on Autonomous Infrastructure, Management and Security},
+  pages={118--121},
+  year={2012},
+  organization={Springer}
+}
+
+% RW: porovnavanie alg. na annomaly detection
+@article{bartovs2012framework,
+  title={Framework for comparison of network anomaly detection algorithms},
+  author={Barto{\v{s}}, V{\'a}clav and {\v{Z}}{\'a}dn{\'\i}k, Martin},
+  journal={Technick{\'a} zpr{\'a}va FIT-TR-2012-02, Fakulta Informacn{\i}ch Technologi{\i}, VUT v Brne, Brno, CZ},
+  year={2012}
+}
+
+% on the fly
+@article{bernaille2006traffic,
+  title={Traffic classification on the fly},
+  author={Bernaille, Laurent and Teixeira, Renata and Akodkenou, Ismael and Soule, Augustin and Salamatian, Kave},
+  journal={ACM SIGCOMM Computer Communication Review},
+  volume={36},
+  number={2},
+  pages={23--26},
+  year={2006},
+  publisher={ACM New York, NY, USA}
+}
+
+@inproceedings{abdulla1998fly,
+  title={On-the-fly analysis of systems with unbounded, lossy FIFO channels},
+  author={Abdulla, Parosh Aziz and Bouajjani, Ahmed and Jonsson, Bengt},
+  booktitle={International Conference on Computer Aided Verification},
+  pages={305--318},
+  year={1998},
+  organization={Springer}
+}
+
+@article{de200625,
+  title={25 years of time series forecasting},
+  author={De Gooijer, Jan G and Hyndman, Rob J},
+  journal={International journal of forecasting},
+  volume={22},
+  number={3},
+  pages={443--473},
+  year={2006},
+  publisher={Elsevier}
+}
+
+% RW: time series forecast
+@inproceedings{madan2018predicting,
+  title={Predicting computer network traffic: a time series forecasting approach using DWT, ARIMA and RNN},
+  author={Madan, Rishabh and SarathiMangipudi, Partha},
+  booktitle={2018 Eleventh International Conference on Contemporary Computing (IC3)},
+  pages={1--5},
+  year={2018},
+  organization={IEEE}
+}
+
+% RW forecast
+@article{cortez2012multi,
+  title={Multi-scale Internet traffic forecasting using neural networks and time series methods},
+  author={Cortez, Paulo and Rio, Miguel and Rocha, Miguel and Sousa, Pedro},
+  journal={Expert Systems},
+  volume={29},
+  number={2},
+  pages={143--155},
+  year={2012},
+  publisher={Wiley Online Library}
+}
+
+%RW anomaly detection
+@article{jiang2004detecting,
+  title={Detecting network attacks in the internet via statistical network traffic normality prediction},
+  author={Jiang, Jun and Papavassiliou, Symeon},
+  journal={Journal of Network and Systems Management},
+  volume={12},
+  number={1},
+  pages={51--72},
+  year={2004},
+  publisher={Springer}
+}
+
+% RW: forecast
+@inproceedings{hasegawa2001applications,
+  title={Applications of nonlinear prediction methods to the internet traffic},
+  author={Hasegawa, Mikio and Wu, Gang and Mizuni, Mitsuhiko},
+  booktitle={ISCAS 2001. The 2001 IEEE International Symposium on Circuits and Systems (Cat. No. 01CH37196)},
+  volume={3},
+  pages={169--172},
+  year={2001},
+  organization={IEEE}
+}
+
+% RW: long term forecast
+@article{papagiannaki2005long,
+  title={Long-term forecasting of Internet backbone traffic},
+  author={Papagiannaki, Konstantina and Taft, Nina and Zhang, Zhi-Li and Diot, Christophe},
+  journal={IEEE transactions on neural networks},
+  volume={16},
+  number={5},
+  pages={1110--1124},
+  year={2005},
+  publisher={IEEE}
+}
+
+% RW: forecast, dasa predikovat a kolko je este rozumne
+@article{sang2002predictability,
+  title={A predictability analysis of network traffic},
+  author={Sang, Aimin and Li, San-qi},
+  journal={Computer networks},
+  volume={39},
+  number={4},
+  pages={329--345},
+  year={2002},
+  publisher={Elsevier}
+}
+
+% RW forecast model optimalizovany genetickymi alg.
+@inproceedings{wang2008internet,
+  title={An internet traffic forecasting model adopting radical based on function neural network optimized by genetic algorithm},
+  author={Wang, Cong and Zhang, Xiaoxia and Yan, Han and Zheng, Linlin},
+  booktitle={First International Workshop on Knowledge Discovery and Data Mining (WKDD 2008)},
+  pages={367--370},
+  year={2008},
+  organization={IEEE}
+}
+
+% RW: TS and vulnerabilities
+@article{roumani2015time,
+  title={Time series modeling of vulnerabilities},
+  author={Roumani, Yaman and Nwankpa, Joseph K and Roumani, Yazan F},
+  journal={Computers \& Security},
+  volume={51},
+  pages={32--40},
+  year={2015},
+  publisher={Elsevier}
+}
+
+@article{tang2018disclosure,
+  title={Disclosure of cyber security vulnerabilities: time series modelling},
+  author={Tang, MingJian and Alazab, Mamoun and Luo, Yuxiu and Donlon, Matthew},
+  journal={International Journal of Electronic Security and Digital Forensics},
+  volume={10},
+  number={3},
+  pages={255--275},
+  year={2018},
+  publisher={Inderscience Publishers (IEL)}
+}
+
+% THEORY
+@article{zhao2019optimized,
+  title={An optimized time series combined forecasting method based on neural networks},
+  author={Zhao, Kaiyi and Li, Li and Cai, Saihua and Sun, Ruizhi},
+  journal={The Journal of Supercomputing},
+  pages={1--27},
+  year={2019},
+  publisher={Springer}
+}
+
+% ina oblast - Institute of Water Conservancy and Hydroelectric Power
+@article{wang2009comparison,
+  title={A comparison of performance of several artificial intelligence methods for forecasting monthly discharge time series},
+  author={Wang, Wen-Chuan and Chau, Kwok-Wing and Cheng, Chun-Tian and Qiu, Lin},
+  journal={Journal of hydrology},
+  volume={374},
+  number={3-4},
+  pages={294--306},
+  year={2009},
+  publisher={Elsevier}
+}
+
+% Vulnerability dependencies
+@article{tang2017big,
+  title={Big data for cybersecurity: Vulnerability disclosure trends and dependencies},
+  author={Tang, MingJian and Alazab, Mamoun and Luo, Yuxiu},
+  journal={IEEE Transactions on Big Data},
+  year={2017},
+  publisher={IEEE}
+}
+
+% dalsi pristup ku klasifikacii siete pomocou CNN
+@incollection{millar2019using,
+  title={Using convolutional neural networks for classifying malicious network traffic},
+  author={Millar, Kyle and Cheng, Adriel and Chew, Hong Gunn and Lim, Cheng-Chew},
+  booktitle={Deep Learning Applications for Cyber Security},
+  pages={103--126},
+  year={2019},
+  publisher={Springer}
+}
+
+% RW vuln ale na OS
+@article{pokhrel2017cybersecurity,
+  title={Cybersecurity: Time series predictive modeling of vulnerabilities of desktop operating system using linear and non-linear approach},
+  author={Pokhrel, Nawa Raj and Rodrigo, Hansapani and Tsokos, Chris P and others},
+  journal={Journal of Information Security},
+  volume={8},
+  number={04},
+  pages={362},
+  year={2017},
+  publisher={Scientific Research Publishing}
+}
+
+% RW podobny pristup k zranitelnostiam ako planujeme
+@inproceedings{werner2017time,
+  title={Time series forecasting of cyber attack intensity},
+  author={Werner, Gordon and Yang, Shanchieh and McConky, Katie},
+  booktitle={Proceedings of the 12th Annual Conference on cyber and information security research},
+  pages={1--3},
+  year={2017}
+}
+
+
+@article{shin2013advanced,
+  title={Advanced probabilistic approach for network intrusion forecasting and detection},
+  author={Shin, Seongjun and Lee, Seungmin and Kim, Hyunwoo and Kim, Sehun},
+  journal={Expert systems with applications},
+  volume={40},
+  number={1},
+  pages={315--322},
+  year={2013},
+  publisher={Elsevier}
+}
+
+% RW forecast
+@inproceedings{ramaki2015real,
+  title={Real time alert correlation and prediction using Bayesian networks},
+  author={Ramaki, Ali Ahmadian and Khosravi-Farmad, Masoud and Bafghi, Abbas Ghaemi},
+  booktitle={2015 12th International Iranian Society of Cryptology Conference on Information Security and Cryptology (ISCISC)},
+  pages={98--103},
+  year={2015},
+  organization={IEEE}
+}
+
+% RW: detekcia zeroday
+@inproceedings{musca2013detecting,
+  title={Detecting and analyzing zero-day attacks using honeypots},
+  author={Musca, Constantin and Mirica, Emma and Deaconescu, Razvan},
+  booktitle={2013 19th international conference on control systems and computer science},
+  pages={543--548},
+  year={2013},
+  organization={IEEE}
+}
+
+
+% do uvodu o Situation Awareness
+@inproceedings{jirsik2020cyber,
+  title={Cyber Situation Awareness via IP Flow Monitoring},
+  author={Jirsik, Tomas and Celeda, Pavel},
+  booktitle={NOMS 2020-2020 IEEE/IFIP Network Operations and Management Symposium},
+  pages={1--6},
+  year={2020},
+  organization={IEEE}
+}
+
+% RW podobny research problem
+@inproceedings{husak2020predictions,
+  title={Predictions of Network Attacks in Collaborative Environment},
+  author={Hus{\'a}k, Martin and {\v{C}}eleda, Pavel},
+  booktitle={NOMS 2020-2020 IEEE/IFIP Network Operations and Management Symposium},
+  pages={1--6},
+  year={2020},
+  organization={IEEE}
+}
+
+% RW sposob ako to robia v cesku
+@inproceedings{AIDAframework,
+  author = {Hus\'{a}k, Martin and Ka\v{s}par, Jaroslav},
+  title = {AIDA Framework: Real-Time Correlation and Prediction of Intrusion Detection Alerts},
+  booktitle = {Proceedings of the 14th International Conference on Availability, Reliability and Security},
+  series = {ARES '19},
+  year = {2019},
+  isbn = {978-1-4503-7164-3},
+  location = {Canterbury, CA, United Kingdom},
+  pages = {81:1--81:8},
+  doi = {10.1145/3339252.3340513},
+  publisher = {ACM},
+  address = {New York, NY, USA},
+  keywords = {alert correlation, data mining, information sharing, intrusion detection, prediction}
+}
+
+@article{fang2019deep,
+  title={A deep learning framework for predicting cyber attacks rates},
+  author={Fang, Xing and Xu, Maochao and Xu, Shouhuai and Zhao, Peng},
+  journal={EURASIP Journal on Information Security},
+  volume={2019},
+  number={1},
+  pages={5},
+  year={2019},
+  publisher={Springer}
+}
+
+@inproceedings{lilly2019applying,
+  title={Applying Indications and Warning Frameworks to Cyber Incidents},
+  author={Lilly, Bilyana and Ablon, Lillian and Hodgson, Quentin E and Moore, Adam S},
+  booktitle={2019 11th International Conference on Cyber Conflict (CyCon)},
+  volume={900},
+  pages={1--21},
+  year={2019},
+  organization={IEEE}
+}
+
+@inproceedings{nevavuori2019requirements,
+  title={Requirements for training and evaluation dataset of network and host intrusion detection system},
+  author={Nevavuori, Petteri and Kokkonen, Tero},
+  booktitle={World Conference on Information Systems and Technologies},
+  pages={534--546},
+  year={2019},
+  organization={Springer}
+}
+
+@article{doynikova2020attacker,
+  title={Attacker Behaviour Forecasting Using Methods of Intelligent Data Analysis: A Comparative Review and Prospects},
+  author={Doynikova, Elena and Novikova, Evgenia and Kotenko, Igor},
+  journal={Information},
+  volume={11},
+  number={3},
+  pages={168},
+  year={2020},
+  publisher={Multidisciplinary Digital Publishing Institute}
+}
+
+@article{zhao2019network,
+  title={Network anomaly detection by using a time-decay closed frequent pattern},
+  author={Zhao, Ying and Chen, Junjun and Wu, Di and Teng, Jian and Sharma, Nabin and Sajjanhar, Atul and Blumenstein, Michael},
+  journal={Information},
+  volume={10},
+  number={8},
+  pages={262},
+  year={2019},
+  publisher={Multidisciplinary Digital Publishing Institute}
+}
+
+@article{blythparticle,
+  title={A Particle Swarm Model for Agile Cyber Attack Prediction},
+  author={Blyth, Andrew JC},
+  year={2019}
+}
+
+@article{granat2019big,
+  title={Big Data Analytics for Event Detection in the IoT-Multicriteria Approach},
+  author={Granat, Janusz and Batalla, Jordi Mongay and Mavromoustakis, Constandinos X and Mastorakis, George},
+  journal={IEEE Internet of Things Journal},
+  volume={7},
+  number={5},
+  pages={4418--4430},
+  year={2019},
+  publisher={IEEE}
+}
+
+@INPROCEEDINGS{zhang2009survey,
+  author={W. {Zhang} and Q. {Yang} and Y. {Geng}},
+  booktitle={2009 International Symposium on Computer Network and Multimedia Technology}, 
+  title={A Survey of Anomaly Detection Methods in Networks}, 
+  year={2009},
+  volume={},
+  number={},
+  pages={1-3},}
+  
+  @inproceedings{pezoa2016foundations,
+  title={Foundations of JSON schema},
+  author={Pezoa, Felipe and Reutter, Juan L and Suarez, Fernando and Ugarte, Mart{\'\i}n and Vrgo{\v{c}}, Domagoj},
+  booktitle={Proceedings of the 25th International Conference on World Wide Web},
+  pages={263--273},
+  year={2016},
+  organization={International World Wide Web Conferences Steering Committee}
+}
+
+@article{husak2020preprint,
+    title={Predictive Methods in Cyber Defense: Current Experience and Research Challenges},
+    author={Martin Husák, Václav Bartoš, Pavol Sokol, Andrej Gajdoš},
+    journal={Future Generation Computer Systems},
+    year={2020}
+}
+
+@inproceedings{wei2013comprehensive,
+  title={Comprehensive analysis of network security situational awareness methods and models},
+  author={Wei, Xiumei and Jiang, Xuesong},
+  booktitle={2013 2nd International Symposium on Instrumentation and Measurement, Sensor Network and Automation (IMSNA)},
+  pages={176--179},
+  year={2013},
+  organization={IEEE}
+}
+@article{al2011selecting,
+  title={Selecting wavelet transforms model in forecasting financial time series data based on ARIMA model},
+  author={Al Wadia, MTIS and Ismail, M Tahir},
+  journal={Applied Mathematical Sciences},
+  volume={5},
+  number={7},
+  pages={315--326},
+  year={2011}
+}
+@inproceedings{park2010study,
+  title={A study on risk analysis and assessment of damages to cyber attack},
+  author={Park, Won Hyung},
+  booktitle={2010 International Conference on Information Science and Applications},
+  pages={1--6},
+  year={2010},
+  organization={IEEE}
+}
+
+@inproceedings{geib2001plan,
+  title={Plan recognition in intrusion detection systems},
+  author={Geib, Christopher W and Goldman, Robert P},
+  booktitle={Proceedings DARPA Information Survivability Conference and Exposition II. DISCEX'01},
+  volume={1},
+  pages={46--55},
+  year={2001},
+  organization={IEEE}
+}
+@article{hughes2003attack,
+author = {Hughes, Todd and Sheyner, Oleg},
+year = {2003},
+month = {11},
+pages = {15-18},
+title = {Attack scenario graphs for computer network threat analysis and prediction},
+volume = {9},
+journal = {Complexity},
+doi = {10.1002/cplx.20001}
+}
+@inproceedings{qin2004attack,
+  title={Attack plan recognition and prediction using causal networks},
+  author={Qin, Xinzhou and Lee, Wenke},
+  booktitle={20th Annual Computer Security Applications Conference},
+  pages={370--379},
+  year={2004},
+  organization={IEEE}
+}
+@article{ahmed2017attack,
+  title={Attack Intention Recognition: A Review.},
+  author={Ahmed, Abdulghani Ali and Zaman, Noorul Ahlami Kamarul},
+  journal={IJ Network Security},
+  volume={19},
+  number={2},
+  pages={244--250},
+  year={2017}
+}
+@article{zhang2019intrusion,
+  title={An intrusion action-based IDS alert correlation analysis and prediction framework},
+  author={Zhang, Kai and Zhao, Fei and Luo, Shoushan and Xin, Yang and Zhu, Hongliang},
+  journal={IEEE Access},
+  volume={7},
+  pages={150540--150551},
+  year={2019},
+  publisher={IEEE}
+}
+@article{farhadi2011alert,
+author = {Farhadi, Hamid and Amir Haeri, Maryam and Khansari, Mohammad},
+year = {2011},
+month = {01},
+pages = {77-102},
+title = {Alert Correlation and Prediction Using Data Mining and HMM},
+volume = {3},
+journal = {ISeCure, The ISC International Journal of Information Security}
+}
+@inproceedings{li2007data,
+  title={A data mining approach to generating network attack graph for intrusion prediction},
+  author={Li, Zhi-tang and Lei, Jie and Wang, Li and Li, Dong},
+  booktitle={Fourth International Conference on Fuzzy Systems and Knowledge Discovery (FSKD 2007)},
+  volume={4},
+  pages={307--311},
+  year={2007},
+  organization={IEEE}
+}
+@article{kim2014study,
+  title={A study on cyber threat prediction based on intrusion detection event for APT attack detection},
+  author={Kim, Yong-Ho and Park, Won Hyung},
+  journal={Multimedia tools and applications},
+  volume={71},
+  number={2},
+  pages={685--698},
+  year={2014},
+  publisher={Springer}
+}
+
+
+@article{ramaki2016survey,
+author = {Ramaki, Ali Ahmadian and Atani, Reza Ebrahimi},
+title = {A survey of IT early warning systems: architectures, challenges, and solutions},
+journal = {Security and Communication Networks},
+volume = {9},
+number = {17},
+pages = {4751-4776},
+doi = {10.1002/sec.1647},
+year = {2016}
+}
+@inproceedings{hernandez2016security,
+  title={Security attack prediction based on user sentiment analysis of Twitter data},
+  author={Hern{\'a}ndez, Aldo and Sanchez, Victor and S{\'a}nchez, Gabriel and P{\'e}rez, H{\'e}ctor and Olivares, Jes{\'u}s and Toscano, Karina and Nakano, Mariko and Martinez, Victor},
+  booktitle={2016 IEEE international conference on industrial technology (ICIT)},
+  pages={610--617},
+  year={2016},
+  organization={IEEE}
+}
+@inproceedings{shu2018understanding,
+  title={Understanding cyber attack behaviors with sentiment information on social media},
+  author={Shu, Kai and Sliva, Amy and Sampson, Justin and Liu, Huan},
+  booktitle={International Conference on Social Computing, Behavioral-Cultural Modeling and Prediction and Behavior Representation in Modeling and Simulation},
+  pages={377--388},
+  year={2018},
+  organization={Springer}
+}
+@inproceedings{shao2016transparent,
+author = {Shao, Peizhi and Lu, Jiuming and Wong, Raymond and Yang, Wenzhuo},
+year = {2016},
+month = {11},
+pages = {159-172},
+title = {A Transparent Learning Approach for Attack Prediction Based on User Behavior Analysis},
+volume = {9977},
+isbn = {978-3-319-50010-2},
+doi = {10.1007/978-3-319-50011-9_13}
+}
+@article{armstrong1985crystal,
+  title={From crystal ball to computer},
+  author={Armstrong, J Scott and Forecasting, Long-Range},
+  journal={New York ua},
+  year={1985}
+}
