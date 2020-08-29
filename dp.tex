@@ -845,8 +845,17 @@ V práci chceme dosiahnuť riešenie fungujúce v~nepretržitej prevádzke a pre
 
 \setlength{\voffset}{0in}
 \setlength{\hoffset}{0in}
+
+\refstepcounter{chapter}%
+\addcontentsline{toc}{section}{\protect\numberline{\thechapter}Data collection and data analysis in honeypots and honeynets.}
 \includepdf[pages=-,fitpaper=true]{priloha/clanok-DataCollection1.pdf}
+
+\refstepcounter{chapter}%
+\addcontentsline{toc}{section}{\protect\numberline{\thechapter}Real-time processing of cybersecurity system data for attacker profiling.}
 \includepdf[pages=-,fitpaper=true]{priloha/clanok-Profiling.pdf}
+
+\refstepcounter{chapter}%
+\addcontentsline{toc}{section}{\protect\numberline{\thechapter}Forecasting security alerts based on time series.}
 \includepdf[pages=-,fitpaper=true]{priloha/clanok-HAIS.pdf}
 
 \end{document}
