@@ -34,7 +34,8 @@
 
 \title{Spracovania kybernetických bezpečnostných údajov v reálnom čase}
 \author{Mgr. Patrik Pekarčík}
-\inytypprace{PROJEKT DIZERTAČNEJ PRÁCE}
+%\inytypprace{PROJEKT DIZERTAČNEJ PRÁCE}
+\inytypprace{RIGORÓZNA PRÁCA}
 \rok{2020}
 \miesto{Košice}
 %\podakovanie{
@@ -181,7 +182,17 @@ Obsah tejto práce je rozdelený do~troch kapitol. V~prvej kapitole sú uvedené
 
 \section{Údaje v~kybernetickej bezpečnosti}
 
-\textcolor{red}{doplnit podla knihy ktoru palo posle} \cite{wang2013cyber}
+Základným kameňom výskumu v~kybernetickej bezpečnosti predstavujú údaje. Bez nich by sme neboli schopní vykonať žiaden výskum, odhaliť bezpečnostné problémy ani získať prehľad o~situácii v~počítačovej sieti. Existuje niekoľko rôznych spôsobov zberu údajov a veľa zdrojov v~sieti, o~ktorých vieme zbierať údaje. Spôsoby zberu údajov sa rozlišujú najmä v~ich robustnosti. Najdetailnejšie vieme odpočúvať celú sieťovú komunikáciu pomocou PCAP sond a získať tak kompletnú informáciu o~všetkých paketoch prenesených po~sieti. Ďalším spôsobom sú logy zo~zariadení a aplikácií, na~rozdiel od~PCAP sond, logy zaznamenávajú významné operácie, ktoré sa udiali. Medzi ne patrí rovnako autentifikácia, pridelenie IP adries v~DHCP sieti, ale aj chybové hlásenia neoprávnených operácií alebo hardvérových chýb. K~logom vieme zaradiť aj výsledky z~iných aplikácií pre kybernetickú bezpečnosť, napríklad IDS sondy, Antivírusové programy a~pod. Ďalším významným prístupom k~zberu údajov je monitorovací prístup podľa rôznych atribútov. K~tomuto prístupu patrí aj NetFlow. NetFlow, pôvodne navrhnutý v~spoločnosti CISCO pre ich smerovače, agreguje informácie o~komunikácii medzi zariadeniami, informácie spočívajú v~počte a veľkosti prenesených paketov bez hlbšieho analyzovania konkrétne prenesených údajov.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.4\textwidth]{images/cyberdata.png}
+  \caption{Klasifikácia kybernetických údajov}
+  \label{fig:cyberdata}
+\end{figure}
+
+Autor~\cite{wang2013cyber} vo~svojom článku navrhol klasifikáciu kybernetických údajov v~hierarchickej štruktúre vizualizovanej na~obrázku č.~\ref{fig:cyberdata}. \textbf{Sieťová vrstva} predstavuje údaje zodpovedajúce TCP/IP modelu. Údaje sú späté so~sieťovými aktivitami a môžu byť používané pre~analýzu skenovania siete, DDoS útokov a~pod. Autor sieťovú vrstvu hlbšie rozdeľuje takto: (1) PCAP údaje, celý obsah prenášaných paketov, (2) monitorovacie údaje NetFlow a (3) smerovacie údaje BGP protokolu. \textbf{Vrstva operačného systému} zahŕňa monitorovacie údaje hardvérovej vyťaženosti zariadenia, údaje o~prihlasovaní, prístupových právach a systémové logy. \textbf{Aplikačná vrstva} zahŕňa logy z~používaných aplikácií. Autor túto vrstvu rozdeľuje podľa toho či reprezentujú sieťovú komunikáciu na~sieťové údaje a aplikačné údaje. K~sieťovým údajom sa zaraďujú najmä logy webových, e-mailových serverov a aplikačnými údajmi sú systémové logy databáz.
+
 
 \section{Predpovede údajov v~sieťovej kybernetickej bezpečnosti} \label{discipliny}
 
@@ -332,7 +343,7 @@ Udalosti využité v~tejto práci pochádzajú z~platformy určenej pre zdieľan
     \label{alg:idea}
 \end{figure}
 
-Pre výskum disponujeme dátami zbieranými z~platformy Warden od~Decembra 2017. Zozbierané dáta za obdobie od~11.12.2017 do~11.12.2018 predstavujú približne miliardu udalostí zo~zdrojov spomenutých vyššie. Technicky sú dáta uložené v~SQLite súborovej databáze po dňoch. Dáta sú v~databáze zoradené podľa času prijatia z~platformy WARDEN. Dôvodom tohto spôsobu uloženia je vysoká efektivita pre výskumné zdieľanie údajov a tiež možnosť prehrať konkrétne obdobie v~rovnakom poradí v~akom nastalo. Veľkosť dennej databázy ku~koncu roka 2018 bola približne 2 GB.
+Pre výskum disponujeme dátami zbieranými z~platformy Warden od~Decembra 2017. Zozbierané dáta za obdobie od~11.12.2017 do~11.12.2018 predstavujú približne miliardu udalostí zo~zdrojov spomenutých vyššie. Technicky sú dáta uložené v~SQLite súborovej databáze po dňoch. Dáta sú v~databáze zoradené podľa času prijatia z~platformy WARDEN. Dôvodom tohto spôsobu uloženia je vysoká efektivita pre výskumné zdieľanie údajov a tiež možnosť prehrať konkrétne obdobie v~rovnakom poradí v~akom nastalo. Veľkosť dennej databázy ku~koncu roka 2018 bola približne 2 GB. Podľa štruktúry autora~\cite{wang2013cyber} vieme o~týchto dátach povedať, že majú vysokú robustnosť pretože obsahujú udalosti zo~všetkých vrstiev klasifikácie kybernetických údajov.
 
 \subsection{Neustály príjem údajov z~platformy WARDEN}
 
@@ -837,9 +848,12 @@ V práci chceme dosiahnuť riešenie fungujúce v~nepretržitej prevádzke a pre
 
 \end{enumerate}
 
-%\includepdf[pages=-]{priloha/clanok-DataCollection1.pdf}
-%\includepdf[pages=-]{priloha/clanok-Profiling.pdf}
-%\includepdf[pages=-]{priloha/clanok-HAIS.pdf}
+\newpage
 
+\setlength{\voffset}{0in}
+\setlength{\hoffset}{0in}
+\includepdf[pages=-,fitpaper=true]{priloha/clanok-DataCollection1.pdf}
+\includepdf[pages=-,fitpaper=true]{priloha/clanok-Profiling.pdf}
+\includepdf[pages=-,fitpaper=true]{priloha/clanok-HAIS.pdf}
 
 \end{document}
