@@ -1,21 +1,36 @@
-\documentclass[thesismargins, thesislinespacing, openright, upjsfrontpage, combineabstracts]{rnthesis}
+\documentclass[thesismargins, thesislinespacing, openright, upjsfrontpage]{rnthesis}
 \usepackage[slovak]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{paralist}
+\usepackage{listings}             % Include the listings-package
+
 
 \usepackage{rnt-pic}
 \usepackage{rnt-thm}
 
-\usepackage{pdfpages} %vkladanie pdf stran do prace
+\usepackage{pdfpages} %vkladanie pdf stran do~prace
 
 \usepackage[hyphens]{url} % format a zalamovanie URL adries
 \usepackage{xcolor}
 \usepackage{longtable}
 \usepackage{multirow}
+\usepackage{chngcntr}
 
+\usepackage[numbers]{natbib}
+ 
+\counterwithout{figure}{chapter}
+\counterwithout{table}{chapter}
 
+\lstset{
+  frame=single,
+  breaklines=true,
+  breakatwhitespace=true,
+  postbreak=\mbox{\textbf{$\hookrightarrow$}\space}
+}
+
+\bibliographystyle{ieeetr}
 
 \title{Spracovania kybernetických bezpečnostných údajov v reálnom čase}
 \author{Mgr. Patrik Pekarčík}
@@ -32,17 +47,13 @@
 \konzultant{RNDr. JUDr. Pavol Sokol, PhD.}
 \pracovisko{Ústav informatiky}
 
-\abstract{
-Dôležitú rolu pri riešení kybernetických bezpečnostných incidentov zohráva adekvátna reakcia na kybernetické bezpečnostné hrozby a útoky. Významným aspektom v tomto smere predstavuje čas potrebný na spracovanie a analýzu kybernetických bezpečnostných údajov. Súčasne dohľadované a bezpečnostné systémy z tohto dôvodu vyžadujú spracovanie veľkého množstva bezpečnostných údajov v reálnom čase. 
-}
+\abstract{Cybersecurity data from production networks are continually being generated in large numbers. In order to be able to maintain a certain level of network security, it is necessary to analyze this data. This work aims to analyze the collection and processing of cybersecurity data and compare them concerning their effectiveness and applicability in production operation. In this work, we process data into time series according to various attributes. At the same time, the work aims to design a model for forecasting time series in order to improve security awareness in the network.}
 
-\keywords{lorem ipsum, dolor, sit amet}
+\keywords{cybersecurity, security awereness, timeseries, forecasting}
 
-\abstrakt{
-Cieľom práce je analyzovať dostupné bezpečnostné riešenia a porovnať ich vzhľadom na ich efektivitu a aplikovateľnosť v reálnej prevádzke. Súčasne je cieľom navrhnúť prostredie umožňujúce reprezentáciu, integráciu a analýzu bezpečnostných údajov za účelom zvládania kybernetických bezpečnostných hrozieb v reálnom čase.
-}
+\abstrakt{Údaje kybernetickej bezpečnosti z~produkčných sietí vznikajú neustále vo~veľkom počte. Aby sme boli schopní udržať istú úroveň bezpečnosti siete je potrebné tieto údaje analyzovať. Cieľom práce je analyzovať zber a spracovanie kybernetických bezpečnostných údajov a porovnať ich vzhľadom na~ich efektivitu a aplikovateľnosť v~reálnej prevádzke. V~tejto práci údaje spracovávame do~časových radov podľa rozličných atribútov. Súčasne je cieľom práce navrhnúť model predikcie časových radov za~účelom zlepšenia povedomia o~situácii v~sieti.}
 
-\klucoveslova{lorem ipsum, dolor, sit amet}
+\klucoveslova{kybernetická bezpečnosť, povedomie o~situácii v~sieti, časové rady, predikcia}
 
 \bibliographystyle{alpha}
 
@@ -57,9 +68,9 @@ Cieľom práce je analyzovať dostupné bezpečnostné riešenia a porovnať ic
 
 \uvod
 
-% Stručné uvedení do problematiky, motivace, přehled dalších kapitol, 2 - 3 strany.
+% Stručné uvedení do~problematiky, motivace, přehled dalších kapitol, 2 - 3 strany.
 
-%     Stručné uvedení do problematiky
+%     Stručné uvedení do~problematiky
 %     Aktuální stav
 %     Co je problém?
 %     Proč je to problém?
@@ -79,42 +90,36 @@ Cieľom práce je analyzovať dostupné bezpečnostné riešenia a porovnať ic
 %     What is the goal of your project?
 %     What is the structure of your proposal? (summary of chapters)
 
-Automatizácia a spracovanie údajov v rámci spoločností sa stali bežnou súčasťou životného cyklu spoločnosti. Tieto spoločnosti používajú technické riešenia, ktoré im pomáhajú efektívnejšie pracovať a zvyšovať zisk. V tejto súvislosti pravidelne rozširujú svoju technickú podporu v podobe počítačovej siete, vývojových a aplikačných serverov. Často sa však stáva, že pri rozširovaní technickej infraštruktúry spoločnosti sa zanedbá, resp. nedostatočne aplikuje bezpečnostná stránka. Jedným z možných dôvodov je skutočnosť, že bezpečnostné riešenia pre počítačové siete nie sú lacnou záležitosťou. Menšie spoločnosti sa v domnienke efektívneho šetrenia rozhodnú neinvestovať v tomto smere. Častým odôvodnením je, že im to nepomôže efektívnejšie pracovať, prípadne nadobúdať zisk. Ďalším častým problémom je aj nízka aktuálnosť softvérového vybavenia zariadení a firemných aplikácií. Príkladom môžu byť dátové úložiská, na ktoré spoločnostiam už vypršali licencie a výrobcovia prestali poskytovať bezpečnostné aktualizácie. Toto úložisko však funguje už dlho a všetci zamestnanci naň boli zvyknutí a preto motivácia prechádzať drahým a bolestivým procesom aktualizácií bez prínosu nových funkcionalít neprichádza v úvahu.
+Automatizácia a spracovanie údajov v~rámci spoločností sa stali bežnou súčasťou životného cyklu spoločnosti. Tieto spoločnosti používajú technické riešenia, ktoré im pomáhajú efektívnejšie pracovať a zvyšovať zisk. V~tejto súvislosti pravidelne rozširujú svoju technickú podporu v~podobe počítačovej siete, vývojových a aplikačných serverov. Často sa však stáva, že pri rozširovaní technickej infraštruktúry spoločnosti sa zanedbá, resp. nedostatočne aplikuje bezpečnostná stránka. Jedným z~možných dôvodov je skutočnosť, že bezpečnostné riešenia pre počítačové siete nie sú lacnou záležitosťou. Menšie spoločnosti sa v~domnienke efektívneho šetrenia rozhodnú neinvestovať v~tomto smere. Častým odôvodnením je, že im to nepomôže efektívnejšie pracovať, prípadne nadobúdať zisk. Ďalším častým problémom je aj nízka aktuálnosť softvérového vybavenia zariadení a firemných aplikácií. Príkladom môžu byť dátové úložiská, na ktoré spoločnostiam už vypršali licencie a výrobcovia prestali poskytovať bezpečnostné aktualizácie. Toto úložisko však funguje už dlho a všetci zamestnanci naň boli zvyknutí a preto motivácia prechádzať drahým a bolestivým procesom aktualizácií bez prínosu nových funkcionalít neprichádza v~úvahu.
 
-Spolu s príchodom prvých incidentov v spoločnostiach sa myslenie začína meniť. Začne sa nákupom antivírusových systémov, ktoré obránia zariadenia voči už známym zraniteľnostiam. To však nie je všemocná zbraň a incidenty budú naďalej, len sofistikovanejšie. Spoločnosti to postupne prevedie dlhým bezpečnostným procesom počas, ktorého si musia vybudovať mechanizmus zbierania rôznych informácii s cieľom získania prehľadu o situácii v ich počítačovej sieti (angl. situation awereness). Rýchlo po vybudovaní budú potrební zamestnanci, ktorí budú tento prehľad sledovať a v prípade podozrivej situácie v istej časti siete, upozornia lokálnych administrátorov alebo používateľov. V podstate si spoločnosť postupne vybuduje vlastné stredisko pre bezpečnosť ich počítačovej siete (angl. Security Operations Centre). Pri náraste siete sa však zvyšuje aj tok údajov, ktoré cez toto stredisko bude permanentne prechádzať. Kým ešte pri malom toku údajov to boli ešte zamestnanci schopní manuálne analyzovať pri zvyšujúcom toku môžu rýchlo stratiť prehľad o situácii. Tu vznikajú otázky ako máme tok údajov sledovať, aké informácie máme sledovať a ako ich sledovanie zautomatizovať?
+Spolu s~príchodom prvých incidentov v~spoločnostiach sa myslenie začína meniť. Začne sa nákupom antivírusových systémov, ktoré obránia zariadenia voči už známym zraniteľnostiam. To však nie je všemocná zbraň a incidenty budú naďalej, len sofistikovanejšie. Spoločnosti to postupne prevedie dlhým bezpečnostným procesom počas, ktorého si musia vybudovať mechanizmus zbierania rôznych informácii s~cieľom získania prehľadu o situácii v~ich počítačovej sieti (angl. situation awereness). Rýchlo po vybudovaní budú potrební zamestnanci, ktorí budú tento prehľad sledovať a v~prípade podozrivej situácie v~istej časti siete, upozornia lokálnych administrátorov alebo používateľov. V~podstate si spoločnosť postupne vybuduje vlastné stredisko pre bezpečnosť ich počítačovej siete (angl. Security Operations Centre). Pri náraste siete sa však zvyšuje aj tok údajov, ktoré cez toto stredisko bude permanentne prechádzať. Kým ešte pri malom toku údajov to boli ešte zamestnanci schopní manuálne analyzovať pri zvyšujúcom toku môžu rýchlo stratiť prehľad o situácii. Tu vznikajú otázky ako máme tok údajov sledovať, aké informácie máme sledovať a ako ich sledovanie zautomatizovať?
 
-Pod tokom údajov v tomto kontexte rozumieme hlavne (1) udalosti zo zariadení v sieti (servery, smerovače, prepínače, aplikácie, webové servery, dátové úložiská, IDS sondy a pod.) a (2) vyťaženie zariadení (aktuálny prenos po sieti, vyťaženie procesora, vyťaženie pamäte a pod.). Pre zamestnancov je určite jednoduchšie kontrolovať vyťaženie zo zariadení pretože tieto údaje je jednoduché preniesť do vizuálneho prehľadu v podobe grafov. S udalosťami zo zariadení už môže byť problém, pretože obsahujú všetky informácie o situácii v sieti. Ak si predstavíme udalosti webového servera, ktorý za hodinu má milión dopytov od zamestnancov firmy, tak bude obsahovať minimálne rovnaký počet záznamov. Udalosti sú však veľmi cenné už pri hľadaní konkrétnych problémov, ak potrebujeme zistiť postup útočníka a vieme napríklad kedy alebo z akej IP adresy útok začal. 
+Pod tokom údajov v~tomto kontexte rozumieme hlavne (1) udalosti zo~zariadení v~sieti (servery, smerovače, prepínače, aplikácie, webové servery, dátové úložiská, IDS sondy a pod.) a (2) vyťaženie zariadení (aktuálny prenos po sieti, vyťaženie procesora, vyťaženie pamäte a pod.)~ˇ\cite{kent2016cyber}. Pre zamestnancov je určite jednoduchšie kontrolovať vyťaženie zo~zariadení pretože tieto údaje je jednoduché preniesť do~vizuálneho prehľadu v~podobe grafov. S~udalosťami zo~zariadení už môže byť problém, pretože obsahujú všetky informácie o situácii v~sieti. Ak si predstavíme udalosti webového servera, ktorý za hodinu má milión dopytov od~zamestnancov firmy, tak bude obsahovať minimálne rovnaký počet záznamov. Udalosti sú však veľmi cenné už pri hľadaní konkrétnych problémov, ak potrebujeme zistiť postup útočníka a vieme napríklad kedy alebo z~akej IP adresy útok začal. 
 
-Oblasť, ktorej sa venujeme, je automatizácia spracovania toku údajov s prihliadnutím na fakt neustálej prevádzky. Z praxe už vieme, že pri statickej analýze toku údajov (napr. za predchádzajúci mesiac) len zistíme, že útok bol napríklad pred 30-timi dňami, kde útočník získal čo potreboval a útok už neopakoval~\cite{park2010study}. V našej práci sa venujeme oblasti priebežnému spracovaniu (angl. on the fly) toku údajov vo viacerých krokoch. V tejto práci sa hlavne venujeme udalostiam. Udalosti agregujeme v rôznych časových oknách podľa ich kategórií, protokolov, portov, adries, sietí a vytvárame z nich časové rady. V prvom kroku vznikajú údaje veľmi podobné vyťaženiu zariadení a je možné tieto údaje vizuálne analyzovať v grafoch. Skúsení sieťoví administrátori by s takto pripravenými údajmi, po čase dokázali odhaliť rozdiely v správaní sa ich sietí~\cite{papagiannaki2005long}.
+Oblasť, ktorej sa venujeme, je automatizácia spracovania toku údajov s~prihliadnutím na fakt neustálej prevádzky. Z praxe už vieme, že pri statickej analýze toku údajov (napr. za predchádzajúci mesiac) len zistíme, že útok bol napríklad pred 30-timi dňami, kde útočník získal čo potreboval a útok už neopakoval~\cite{park2010study}. V~našej práci sa venujeme oblasti priebežnému spracovaniu (angl. real-time processing) toku údajov vo~viacerých krokoch. V~tejto práci sa hlavne venujeme udalostiam. Udalosti agregujeme v~rôznych časových oknách podľa ich kategórií, protokolov, portov, adries, sietí a vytvárame z~nich časové rady. V~prvom kroku vznikajú údaje veľmi podobné vyťaženiu zariadení a je možné tieto údaje vizuálne analyzovať v~grafoch. Skúsení sieťoví administrátori by s~takto pripravenými údajmi, po čase dokázali odhaliť rozdiely v~správaní sa ich sietí~\cite{papagiannaki2005long}.
 
-Z vizualizácie dát plynule prechádzame k predikcii situácie v počítačovej sieti. Podľa nášho názoru je možné pomocou predikcií budúceho vyťaženia rozlišovať legitímnu prevádzku a tiež odhaliť odchýlky od legitímnej prevádzky. Tento spôsob analyzovania údajov môže mať obrovskú priepustnosť toku údajov a pomocou nájdených odchýlok sa môžu zamestnanci venovať len dohľadaniu udalostí pre konkrétne časy určené automaticky nahlásenou odchýlkou. Pri funkčných predikčných modeloch s nízkym false-negatives by tento spôsob analyzovania bezpečnostných údajov mohol efektívne detegovať aj zero-day zraniteľnosti. Analyzujeme rôzne predikčné modely a tiež rôzne spôsoby vstupov pre modely (jedno rozmerné, viac rozmerné), taktiež v práci analyzujeme vplyv posuvných okien na učenie a tiež vplyv sezónnosti v rôznych pohľadoch, napr. sezónnosť s prihliadnutím na čas v krajine iniciátora spojenia (príp. útočníka ak to bol útok).
+Z vizualizácie dát plynule prechádzame k~predikcii situácie v~počítačovej sieti. Podľa nášho názoru je možné pomocou predikcií budúceho vyťaženia rozlišovať legitímnu prevádzku a tiež odhaliť odchýlenia od~legitímnej prevádzky. Tento spôsob analyzovania údajov môže mať obrovskú priepustnosť toku údajov a pomocou nájdených odchýlok sa môžu zamestnanci venovať len dohľadaniu udalostí pre konkrétne časy určené automaticky nahlásenou odchýlkou. Pri funkčných predikčných modeloch s~nízkym false-negatives by tento spôsob analyzovania bezpečnostných údajov mohol efektívne detegovať aj zero-day zraniteľnosti. Analyzujeme rôzne predikčné modely a tiež rôzne spôsoby vstupov pre modely (jedno rozmerné, viac rozmerné), taktiež v~práci analyzujeme vplyv posuvných okien na učenie a tiež vplyv sezónnosti v~rôznych pohľadoch, napr. sezónnosť s~prihliadnutím na čas v~krajine iniciátora spojenia (príp. útočníka ak to bol útok).
 
-Vo vedeckej komunite sú tímy zaoberajúce sa podobnou problematikou spracovania jednorozmerných časových radov a ich predikcii. V rámci vedeckých prác nachádzame pokusy prepojenia časových radov napríklad na národnú databázu zraniteľností (angl. National Vulnerability Database) za účelom hľadania vzoriek a predpovede existujúcej zraniteľnosti v sieti. Pri predikciách sa pomerne často využívajú štatistické modely, ktorým sa budeme prevažne venovať v tejto práci. Okrem tejto oblasti sú vo vedeckej komunite tímy zaoberajúce sa spracovaniu časových radov pomocou neurónových sietí.
+Vo vedeckej komunite sú tímy zaoberajúce sa podobnou problematikou spracovania jednorozmerných časových radov a ich predikcii. V~rámci vedeckých prác nachádzame pokusy prepojenia časových radov napríklad na národnú databázu zraniteľností (angl. National Vulnerability Database)~\cite{roumani2015time} za účelom hľadania vzoriek a predpovede existujúcej zraniteľnosti v~sieti. Pri predikciách sa pomerne často využívajú štatistické modely, ktorým sa budeme prevažne venovať v~tejto práci. Okrem tejto oblasti sú vo~vedeckej komunite tímy zaoberajúce sa spracovaniu časových radov pomocou neurónových sietí.
 
-Pracujeme s bezpečnostnými udalosťami generovanými českou vedeckou sieťou CESNET. Udalosti obsahujú dáta z honeypotov, IDS systémov, sieťových prvkov ale aj z logov produkčných systémov. Špecifikom týchto logov je, že ich považujeme ako údaje o útokoch. Hlavným cieľom práce je navrhnúť model predikcie bezpečnostných udalostí v reálnom čase pri zohľadnení kritérií kladených pre predikciu (forecasting) za použitia pomocných atribútov. Túto analýzu vykonáme na rôznych štatistických modeloch. Pri výbere modelov prihliadame na ich budúce využitie v produkčných sieťach s veľkým tokom údajov. Hlavným kritériom výberu je možnosť spracovania časovej jednotky rýchlejšie ako je samotná časová jednotka. Celkový cieľ práce je možné rozdeliť do nasledujúcich parciálnych otázok:
+Pracujeme s~bezpečnostnými udalosťami generovanými českou vedeckou sieťou CESNET. Udalosti obsahujú dáta z~honeypotov, IDS systémov, sieťových prvkov ale aj z~logov produkčných systémov~\cite{kacha2015warden}. Špecifikom týchto logov je, že ich považujeme ako údaje o útokoch.
 
-\begin{enumerate}
-  \item Ako nájsť správnu kombináciu atribútov pre vylepšenie predikcie časových radov v nepretržitej prevádzke?
-  \item Ktoré predikčné modely sú vhodné pre využitie v nepretržitej prevádzke?
-  \item Ako vyhodnocovať presnosť predikčných modelov na dátach kybernetickej bezpečnosti? Aké metriky sú vhodné pre tieto modely?
-\end{enumerate}
-
-Obsah tejto práce je rozdelený do troch kapitol. V prvej kapitole sú uvedené všeobecné teoretické poznatky a popis použitej dátovej sady. Druhá kapitola sa detailne venuje rozboru cieľov práce. V jej podkapitolách je ku každému cieľu je uvedený prehľad aktuálneho stavu riešenia rovnakej problematiky a metodológia akou plánujeme postupovať. V tretej kapitole sú uvedené aktuálne parciálne výsledky nášho výskumu s prvými výsledkami v oblasti predikcie bezpečnostných udalostí v časových radov.
+Obsah tejto práce je rozdelený do~troch kapitol. V~prvej kapitole sú uvedené všeobecné teoretické poznatky a popis použitej dátovej sady. Koniec prvej kapitoly je venovaný formulácii výskumných cieľov. Druhá kapitola sa detailne venuje rozboru cieľov práce. Úvodná časť kapitoly sa venuje dátovej sade a v~jej ďalších podkapitolách, je ku~každému cieľu uvedený prehľad aktuálneho stavu riešenia rovnakej problematiky a metodológia akou plánujeme postupovať. V~tretej kapitole sú uvedené aktuálne parciálne výsledky nášho výskumu s~prvými výsledkami v~oblasti predikcie bezpečnostných udalostí v~časových radov.
 
 % 1) Ktoré parametre (atribúty) sú kritické pre predikciu bezpečnostných udalostí/alertov používajúcu časové rady? Aký vplyv má na úspešnosť predikcie výber vhodných parametrov? Ako ovplyvňujú tieto parametre výber vhodných časových radov?
-%  - tu by sa to rozbilo podľa typov predikcie s tým, že už máš niečo k security awareness
+%  - tu by sa to rozbilo podľa typov predikcie s~tým, že už máš niečo k~security awareness
  
-% 2) Ktoré z ML modelov sú vhodné pre predikciu v reálnom čase? How do variations in the model’s training period affect the performance? Can we reuse a trained model for a given period of time and when do we need to retrain the model? Ako ovplyvňujú pamäťové nároky jednotlivých modelov dosiahnutie predikcie bezpečnostných udalostí/alertov v reálnom čase?
+% 2) Ktoré z~ML modelov sú vhodné pre predikciu v~reálnom čase? How do~variations in the model’s training period affect the performance? Can we reuse a trained model for a given period of time and when do~we need to retrain the model? Ako ovplyvňujú pamäťové nároky jednotlivých modelov dosiahnutie predikcie bezpečnostných udalostí/alertov v~reálnom čase?
 %  - delene metód na predikciu - podľa typov (ako to má M. Husák)
 %  - sezónnosť, časové okná
 %  - krátkodobé, dlhodobé predikcie a pod.
-%  - aké metódy používajú v článkoch
+%  - aké metódy používajú v~článkoch
 %  - aké sú kritéria pre on the fly alebo real-time predikciu
 
 % 3) How to evaluate real-time predictions in cyber security and what metrics should be used? What is proposed system performance in identifying the upcoming security events/alerts and how does its performance compare to the baseline and state-of-the-art methods? Is it sufficient to rely on evaluation using datasets and testbeds or can the actual prediction accuracy be measured in a live network setting? 
 %  - porovnať metódy (všeobecne)
-%  - porovnať metódy použité v článkoch - napr. ktoré metódy sa pri akých údajoch, akých typoch predikcií používajú
-%  - pozrieť diskusie v článkoch - postačujú len datasety? Ako porovnávať s inými údajmi
+%  - porovnať metódy použité v~článkoch - napr. ktoré metódy sa pri akých údajoch, akých typoch predikcií používajú
+%  - pozrieť diskusie v~článkoch - postačujú len datasety? Ako porovnávať s~inými údajmi
 %  - urobit porovnanie metrik
 
 
@@ -123,13 +128,13 @@ Obsah tejto práce je rozdelený do troch kapitol. V prvej kapitole sú uvedené
 
 % \chapter{State of the Art}\label{state}
 
-% Současný stav řešené problematiky, přehled klasických i aktuálních výsledků a jejich porovnání, analýza problematiky vedoucí k vymezení oblasti zájmu budoucí disertační práce, 8 - 12 stran.
+% Současný stav řešené problematiky, přehled klasických i aktuálních výsledků a jejich porovnání, analýza problematiky vedoucí k~vymezení oblasti zájmu budoucí disertační práce, 8 - 12 stran.
 
 %     Jaký je současný stav řešené problematiky?
 %     Jaké jsou klasické a aktuální výsledky? Uveďte jejich přehled a porovnání.
-%     Jaká jsou aktuální témata k řešení?
+%     Jaká jsou aktuální témata k~řešení?
 %     Kdo se jejich řešením zabývá?
-%     Jakým způsobem chcete k řešení přispět?
+%     Jakým způsobem chcete k~řešení přispět?
 
 % State of the Art (8-12 pages)
 % 
@@ -143,11 +148,11 @@ Obsah tejto práce je rozdelený do troch kapitol. V prvej kapitole sú uvedené
 
 % Stanovení cílů a metodologie disertační práce ("co, proč, jak"), očekávané výsledky, dosažené výsledky, časový harmonogram dalšího postupu, alespoň 2 strany.
 
-%     Jaké nové poznatky budou v rámci práce prezentovány?
-%     Co nového bude v rámci práce vytvořeno?
+%     Jaké nové poznatky budou v~rámci práce prezentovány?
+%     Co nového bude v~rámci práce vytvořeno?
 %     Jaké hypotézy budete zkoumat?
 %     Jaké metody plánujete použít? (např. empirická studie, implementace prototypu)
-%     Jaké kroky a v jakém horizontu plánujete uskutečnit? (reálný časový harmonogram)
+%     Jaké kroky a v~jakém horizontu plánujete uskutečnit? (reálný časový harmonogram)
 %     Na kterých konferencích/v jakých časopisech budete prezentovat dosažené výsledky?
 
 % Aims of the Thesis (at least 2 pages)
@@ -157,7 +162,7 @@ Obsah tejto práce je rozdelený do troch kapitol. V prvej kapitole sú uvedené
 %     What are the hypotheses that are to be investigated?
 %     What method(s) will be applied? (e.g. empirical study, prototype implementation)
 %     What are the planned steps? Give realistic estimation of dates.
-%     Where do you plan to publish your results? (e.g. conferences, journals)
+%     Where do~you plan to publish your results? (e.g. conferences, journals)
 
 %\chapter{Achieved Results}\label{results}
 
@@ -174,13 +179,13 @@ Obsah tejto práce je rozdelený do troch kapitol. V prvej kapitole sú uvedené
 %     Where have the results already been presented? (workshops, conferences, journals)
 \chapter{Kybernetické bezpečnostné údaje}
 
-\section{Spracovanie údajov v kybernetickej bezpečnosti}
+\section{Údaje v~kybernetickej bezpečnosti}
 
-\textcolor{red}{doplnit podla knihy ktoru palo posle}
+\textcolor{red}{doplnit podla knihy ktoru palo posle} \cite{wang2013cyber}
 
-\section{Predpovede údajov v sieťovej kybernetickej bezpečnosti} \label{discipliny}
+\section{Predpovede údajov v~sieťovej kybernetickej bezpečnosti} \label{discipliny}
 
-Nedávny článok~\cite{Husak2018survey} rozdeľuje spôsoby predikcií v oblasti kybernetickej bezpečnosti na 3 vedecké disciplíny. Faktorom rozdelenia je položenie otázky, čo sa predikuje. Toto rozdelenie na oblasti predikcií je znázornené v tabuľke~\ref{Tab:husak}.
+Nedávny článok~\cite{Husak2018survey} rozdeľuje spôsoby predikcií v~oblasti kybernetickej bezpečnosti na 3 vedecké disciplíny. Faktorom rozdelenia je položenie otázky, čo sa predikuje. Toto rozdelenie na oblasti predikcií je znázornené v~tabuľke~\ref{Tab:husak}.
 
 \begin{table}
 \begin{center}
@@ -190,56 +195,56 @@ Nedávny článok~\cite{Husak2018survey} rozdeľuje spôsoby predikcií v oblast
 \hline
 \hline Projekcia útokov & Čo budú ďalšie kroky útočníka? & Yang et al.~\cite{Yang2014} \\
 \hline Predikcia útokov & Aký bude budúci útok, kedy nastane a kam bude smerovaný? & Abdlhamed et al.~\cite{Abdlhamed2017} \\
-\hline \textbf{Predpovedanie sieťovej bezpečnostnej situácie} & Ako sa bude meniť sitácia v sieti v najbližšom čase? Koľko útokov môžeme očakávať? & Leau and  Manickam~\cite{Leau2015} \\
+\hline \textbf{Predpovedanie sieťovej bezpečnostnej situácie} & Ako sa bude meniť sitácia v~sieti v~najbližšom čase? Koľko útokov môžeme očakávať? & Leau and  Manickam~\cite{Leau2015} \\
 \hline
 \end{tabular}
 \end{center}
 \label{Tab:husak}
-\caption{Oblasti predpovedí v kybernetickej bezpečnosti~\cite{Husak2018survey}}
+\caption{Oblasti predpovedí v~kybernetickej bezpečnosti~\cite{Husak2018survey}}
 \end{table}
 
-Úlohou prvej disciplíny, projekcie útoku~\cite{Yang2014}, je predpovedať ďalší krok útočníka v jeho už prebiehajúcom útoku. Projekcia je založená na už známych pozorovaniach a je možné ju vyhodnocovať v reálnom čase. Úlohou ďalšej disciplíny, predikcie útokov~\cite{Abdlhamed2017}, je predpovedať kedy, kde a kam bude smerovaný ďalší útok na infraštruktúru. V tejto predikcii nepredpokladáme už prebiehajúci útok. Predpovedané útoky musia nastať niekedy v budúcnosti. Úlohou poslednej disciplíny, predpovedania sieťovej bezpečnostnej situácie~\cite{wei2013comprehensive,Leau2015}, je zvýšiť povedomie o situácii v počítačovej sieti. V tejto disciplíne nie je dôležitá predpoveď, aký útok nastane na konkrétnom zariadení, ale skôr predpovedať čo sa bude diať v celej počítačovej sieti. Výsledkom môže byť predpoveď zvýšenia alebo zníženia počtu útokov a tým nájdenie silných a slabých miest v počítačovej sieti. V nasledujúcej podkapitole sa budeme bližšie venovať poslednej disciplíne tohto rozdelenia.
+Úlohou prvej disciplíny, projekcie útoku~\cite{Yang2014}, je predpovedať ďalší krok útočníka v~jeho už prebiehajúcom útoku. Projekcia je založená na už známych pozorovaniach a je možné ju vyhodnocovať v~reálnom čase. Úlohou ďalšej disciplíny, predikcie útokov~\cite{Abdlhamed2017}, je predpovedať kedy, kde a kam bude smerovaný ďalší útok na infraštruktúru. V~tejto predikcii nepredpokladáme už prebiehajúci útok. Predpovedané útoky musia nastať niekedy v~budúcnosti. Úlohou poslednej disciplíny, predpovedania sieťovej bezpečnostnej situácie~\cite{wei2013comprehensive,Leau2015}, je zvýšiť povedomie o situácii v~počítačovej sieti. V~tejto disciplíne nie je dôležitá predpoveď, aký útok nastane na konkrétnom zariadení, ale skôr predpovedať čo sa bude diať v~celej počítačovej sieti. Výsledkom môže byť predpoveď zvýšenia alebo zníženia počtu útokov a tým nájdenie silných a slabých miest v~počítačovej sieti. V~nasledujúcej podkapitole sa budeme bližšie venovať poslednej disciplíne tohto rozdelenia.
 
 \subsection{Projekcia útokov}
 
-Projekcia útoku~\cite{Yang2014} je najstaršou disciplínou predpovedí v kybernetickej bezpečnosti. Bola navrhnutá takmer pred dvoma desaťročiami~\cite{geib2001plan}, prvé metódy sa začali objavovať už okolo roku 2003~\cite{hughes2003attack,qin2004attack} a výskum stále pokračuje~\cite{ahmed2017attack,zhang2019intrusion}. Aby sme vytvorili projekciu útoku a predpovedali jeho ďalšie kroky, musíme mať zdokumentované správanie sa útočníkov a vypracované popisy útokov (scenáre) podľa, ktorých bude projekcia vytvorená. Mnohý kybernetickým útokom predchádza množina krokov, ktoré je možné odhaliť na počítačovej sieti alebo na cieľových zariadeniach pomocou IDS systémov. Príkladom krokov môže byť nasledujúci všeobecný scenár útoku.
+Projekcia útoku~\cite{Yang2014} je najstaršou disciplínou predpovedí v~kybernetickej bezpečnosti. Bola navrhnutá takmer pred dvoma desaťročiami~\cite{geib2001plan}, prvé metódy sa začali objavovať už okolo roku 2003~\cite{hughes2003attack,qin2004attack} a výskum stále pokračuje~\cite{ahmed2017attack,zhang2019intrusion}. Aby sme vytvorili projekciu útoku a predpovedali jeho ďalšie kroky, musíme mať zdokumentované správanie sa útočníkov a vypracované popisy útokov (scenáre) podľa, ktorých bude projekcia vytvorená. Mnohý kybernetickým útokom predchádza množina krokov, ktoré je možné odhaliť na počítačovej sieti alebo na cieľových zariadeniach pomocou IDS systémov. Príkladom krokov môže byť nasledujúci všeobecný scenár útoku.
 
 \begin{compactenum}
     \item Útočník horizontálne prehľadá počítačovú sieť, aby našiel aktívne zariadenia.
     \item Útočník vertikálne prehľadá aktívne zariadenia, aby našiel otvorené porty.
-    \item Útočník sa pokúsi prelomiť autentifikačnú službu, napr. hrubou silou, aby získal prístup do zariadenia.
-    \item Útočník pomocou chyby v systéme zvýši svoje oprávnenia na zariadení, napr. na administrátora zariadenia.
+    \item Útočník sa pokúsi prelomiť autentifikačnú službu, napr. hrubou silou, aby získal prístup do~zariadenia.
+    \item Útočník pomocou chyby v~systéme zvýši svoje oprávnenia na zariadení, napr. na administrátora zariadenia.
 \end{compactenum}
 
-Konkrétne scenáre by by mali obsahovať aj podrobnosti o každom kroku, ako sú čísla portov, verzia softvérových nástrojov, CVE (Common Vulnerabilities and Exposures) číslo zneužitia a odtlačok útočníka. Projekcia útoku je v podstate veľmi jednoduchá. Ak spozorujeme kroky, ktoré zodpovedajú známemu scenáru útoku, môžeme predpokladať, že útok bude pokračovať podobne ako prislúchajúci scenár a predpovedať ďalšiu činnosť útočníka. Textovo popísaný útok nie je veľmi použiteľný pre algoritmické predpovede. Často sa stretávame s formálnymi zápismi ako je \textbf{graf útoku}~\cite{hughes2003attack} alebo \textbf{pravdepodobnostný grafový model}~\cite{qin2004attack}. Pravdepodobnostné modely nám umožňujú uvažovať o viacerých cieľoch útočníka súčasne. Ďalším problémom, na ktorý je potrebné brať ohľad, je práca s nezachytenými činnosťami alebo odchýlok od známych scenárov. K tomuto problému je možné použiť napr. skryté Markovovské modely~\cite{farhadi2011alert}. Je dôležité si uvedomiť, že pre všetky vytvárané projekcie potrebujeme scenár v ktorom by sa projekcia našla. Prvé metódy závislé od knižníc útokov~\cite{qin2004attack}, ktoré bolo potrebné vyplniť manuálne, čo si vyžaduje značné úsilie a neustále úpravy~\cite{Yang2014}. Moderné metódy sa častejšie spoliehajú na dolovanie údajov, aby mohli automaticky extrahovať scenáre útokov~\cite{li2007data,farhadi2011alert,kim2014study}.
+Konkrétne scenáre by by mali obsahovať aj podrobnosti o každom kroku, ako sú čísla portov, verzia softvérových nástrojov, CVE (Common Vulnerabilities and Exposures) číslo zneužitia a odtlačok útočníka. Projekcia útoku je v~podstate veľmi jednoduchá. Ak spozorujeme kroky, ktoré zodpovedajú známemu scenáru útoku, môžeme predpokladať, že útok bude pokračovať podobne ako prislúchajúci scenár a predpovedať ďalšiu činnosť útočníka. Textovo popísaný útok nie je veľmi použiteľný pre algoritmické predpovede. Často sa stretávame s~formálnymi zápismi ako je \textbf{graf útoku}~\cite{hughes2003attack} alebo \textbf{pravdepodobnostný grafový model}~\cite{qin2004attack}. Pravdepodobnostné modely nám umožňujú uvažovať o viacerých cieľoch útočníka súčasne. Ďalším problémom, na ktorý je potrebné brať ohľad, je práca s~nezachytenými činnosťami alebo odchýlok od~známych scenárov. K tomuto problému je možné použiť napr. skryté Markovovské modely~\cite{farhadi2011alert}. Je dôležité si uvedomiť, že pre všetky vytvárané projekcie potrebujeme scenár v~ktorom by sa projekcia našla. Prvé metódy závislé od~knižníc útokov~\cite{qin2004attack}, ktoré bolo potrebné vyplniť manuálne, čo si vyžaduje značné úsilie a neustále úpravy~\cite{Yang2014}. Moderné metódy sa častejšie spoliehajú na dolovanie údajov, aby mohli automaticky extrahovať scenáre útokov~\cite{li2007data,farhadi2011alert,kim2014study}.
 
 \subsection{Predikcia útokov}
 
-Všeobecnejšou disciplínou je predvídanie počítačových útokov, najmä prienikov~\cite{Abdlhamed2017}. Namiesto projekcie už pozorovaného útoku nás zaujíma predpovedanie nových, budúcich útokov. Lepšie variácie disciplíny zahŕňajú aj predpovede zraniteľností, šírenie útokov a viacstupňové útoky a ďalšie udalosti kybernetickej bezpečnosti. Táto oblasť sa Významne prekrýva s výskumom systémov včasného varovania~\cite{ramaki2016survey}, ktoré predstavujú praktický prípad predikcie v kybernetickej bezpečnosti. Vzhľadom na to, že úloha je príliš všeobecná, existuje celý rad metód, ktoré nemajú veľa spoločných prvkov. Napríklad je možné predpovedať útoky pomocou rovnakých modelov použitých na projekciu útokov, ako sú grafy útokov, s doplnením budúceho začiatku predpovede. Predikcia sa nemusí začať už pozorovanou sériou škodlivých udalostí, ale skôr pravdepodobnosťou, že sa využije konkrétna zraniteľnosť v sieti. 
-V inom prípade na predikciu útokov môžeme využiť aj časové rady reprezentujúce počet útokov na konkrétne zariadenie v sieti alebo celú počítačovú sieť. Zložitejšie metódy prichádzajú s rozšírenými informáciami ako typ útoku, charakteristika útočníka alebo cieľa. Vďaka rozšíreným atribútom vedie presnejšie predikovať typ prichádzajúceho útoku, identifikovať útočníka alebo cieľ útoku. Najnovšie prístupy často zahŕňajú netechnické zdroje údajov v predpovedi, môžeme vidieť metódy založené na analýze textov na sociálnych sieťach~\cite{hernandez2016security,shu2018understanding} alebo na zmenách v správaní používateľov~\cite{shao2016transparent}, čím prekonávame "nepredvídateľnosť" kybernetických útokov.
+Všeobecnejšou disciplínou je predvídanie počítačových útokov, najmä prienikov~\cite{Abdlhamed2017}. Namiesto projekcie už pozorovaného útoku nás zaujíma predpovedanie nových, budúcich útokov. Lepšie variácie disciplíny zahŕňajú aj predpovede zraniteľností, šírenie útokov a viacstupňové útoky a ďalšie udalosti kybernetickej bezpečnosti. Táto oblasť sa Významne prekrýva s~výskumom systémov včasného varovania~\cite{ramaki2016survey}, ktoré predstavujú praktický prípad predikcie v~kybernetickej bezpečnosti. Vzhľadom na to, že úloha je príliš všeobecná, existuje celý rad metód, ktoré nemajú veľa spoločných prvkov. Napríklad je možné predpovedať útoky pomocou rovnakých modelov použitých na projekciu útokov, ako sú grafy útokov, s~doplnením budúceho začiatku predpovede. Predikcia sa nemusí začať už pozorovanou sériou škodlivých udalostí, ale skôr pravdepodobnosťou, že sa využije konkrétna zraniteľnosť v~sieti. 
+V inom prípade na predikciu útokov môžeme využiť aj časové rady reprezentujúce počet útokov na konkrétne zariadenie v~sieti alebo celú počítačovú sieť. Zložitejšie metódy prichádzajú s~rozšírenými informáciami ako typ útoku, charakteristika útočníka alebo cieľa. Vďaka rozšíreným atribútom vedie presnejšie predikovať typ prichádzajúceho útoku, identifikovať útočníka alebo cieľ útoku. Najnovšie prístupy často zahŕňajú netechnické zdroje údajov v~predpovedi, môžeme vidieť metódy založené na analýze textov na sociálnych sieťach~\cite{hernandez2016security,shu2018understanding} alebo na zmenách v~správaní používateľov~\cite{shao2016transparent}, čím prekonávame "nepredvídateľnosť" kybernetických útokov.
 
-\subsection{Predpovedanie situácie v oblasti kybernetickej bezpečnosti siete} \label{forecast}
+\subsection{Predpovedanie situácie v~oblasti kybernetickej bezpečnosti siete} \label{forecast}
 
-Namiesto zamerania sa na konkrétne útoky v počítačovej sieti nás v tejto oblasti zaujíma celkový stav situácie v počítačovej sieti. Celkový stav situácie v počítačovej sieti označuje aj ako kybernetická situácia (angl. cyber situational awareness, CSA) alebo bezpečnostná situácia v sieti (angl. network security situational awareness, NSSA) a má pôvod vo všeobecnej definícii povedomia o situácii definovanej ako:
-"Vnímanie prvkov v prostredí v rámci času a priestoru, porozumenie ich významu a projekcia ich stavu v blízkej budúcnosti"~\cite{Endsley1988}. Podľa \cite{Yang2014} aplikujeme definíciu v kybernetickej bezpečnosti takto: 
+Namiesto zamerania sa na konkrétne útoky v~počítačovej sieti nás v~tejto oblasti zaujíma celkový stav situácie v~počítačovej sieti. Celkový stav situácie v~počítačovej sieti označuje aj ako kybernetická situácia (angl. cyber situational awareness, CSA) alebo bezpečnostná situácia v~sieti (angl. network security situational awareness, NSSA) a má pôvod vo~všeobecnej definícii povedomia o situácii definovanej ako:
+"Vnímanie prvkov v~prostredí v~rámci času a priestoru, porozumenie ich významu a projekcia ich stavu v~blízkej budúcnosti"~\cite{Endsley1988}. Podľa \cite{Yang2014} aplikujeme definíciu v~kybernetickej bezpečnosti takto: 
 
 \begin{compactenum}
     \item \textbf{Vnímanie} zodpovedá monitorovaniu kybernetických systémov a detekcii narušenia.
-    \item \textbf{Porozumenie} zodpovedá pochopeniu situácie v oblasti kybernetickej bezpečnosti, ktorá je v našom prípade predstavovaná modelovaním počítačových hrozieb alebo porovnávaním bezpečnostných upozornení. 
-    \item \textbf{Projekcia} je činnosťou predpovedania zmien v situácii kybernetickej bezpečnosti. 
+    \item \textbf{Porozumenie} zodpovedá pochopeniu situácie v~oblasti kybernetickej bezpečnosti, ktorá je v~našom prípade predstavovaná modelovaním počítačových hrozieb alebo porovnávaním bezpečnostných upozornení. 
+    \item \textbf{Projekcia} je činnosťou predpovedania zmien v~situácii kybernetickej bezpečnosti. 
 \end{compactenum}
 
-Väčšina dostupnej literatúry využíva najmä kvantitatívnu analýzu pre popis situácie v počítačovej sieti v jednotke času, časové rady. Pre časové rady sú následne tvorené predikcie ich budúceho správania. Tento prístup nám neprináša informácie o presnej povahe budúcich útokov, ale prináša nám informácie o zvyšovaní alebo znižovaní útočných aktivít na počítačovú sieť. Tento kvantitatívny prístup umožňuje efektívne aplikovanie metód pre analýzu a predpovedí, ktoré boli aplikované aj v iných oblastiach výskumu, napríklad aj v oblasti hydrológie~\cite{wang2009comparison}. Takáto kvantitatívna analýza vyžaduje spôsob vyhodnotenia situácie v počítačovej sieti, avšak pravidelne využívaný spôsob pre tento problém ešte nemáme~\cite{husak2020preprint}. Aktuálne v dostupnej literatúre prevládajú dva prístupy: \textbf{hierarchická metóda s pridanými váhami} a \textbf{metóda odhadu sily útoku}. 
+Väčšina dostupnej literatúry využíva najmä kvantitatívnu analýzu pre popis situácie v~počítačovej sieti v~jednotke času, časové rady. Pre časové rady sú následne tvorené predikcie ich budúceho správania. Tento prístup nám neprináša informácie o presnej povahe budúcich útokov, ale prináša nám informácie o zvyšovaní alebo znižovaní útočných aktivít na počítačovú sieť. Tento kvantitatívny prístup umožňuje efektívne aplikovanie metód pre analýzu a predpovedí, ktoré boli aplikované aj v~iných oblastiach výskumu, napríklad aj v~oblasti hydrológie~\cite{wang2009comparison}. Takáto kvantitatívna analýza vyžaduje spôsob vyhodnotenia situácie v~počítačovej sieti, avšak pravidelne využívaný spôsob pre tento problém ešte nemáme~\cite{husak2020preprint}. Aktuálne v~dostupnej literatúre prevládajú dva prístupy: \textbf{hierarchická metóda s~pridanými váhami} a \textbf{metóda odhadu sily útoku}. 
 
-\textbf{Hierarchická metóda} vyhodnocuje situáciu v počítačovej sieti zdola nahor. Na začiatku sa pre každé zariadenie vyhodnotí situácia individuálne. Následne sa hodnoty pre  zariadenia vynásobia váhou zariadenia a spočítajú sa, aby sa vypočítala celková situácia v počítačovej sieti. Skutočná metóda odhadu zabezpečenia zariadenia  sa líši v závislosti od autora. Váhy zvyčajne vyjadruje dôležitosť zariadenia~\cite{Husak2018survey}.
+\textbf{Hierarchická metóda} vyhodnocuje situáciu v~počítačovej sieti zdola nahor. Na~začiatku sa pre každé zariadenie vyhodnotí situácia individuálne. Následne sa hodnoty pre  zariadenia vynásobia váhou zariadenia a spočítajú sa, aby sa vypočítala celková situácia v~počítačovej sieti. Skutočná metóda odhadu zabezpečenia zariadenia  sa líši v~závislosti od~autora. Váhy zvyčajne vyjadruje dôležitosť zariadenia~\cite{Husak2018survey}.
 
-\textbf{Prístup sily útoku} spája informácie o prebiehajúcich útokoch z rôznych zdrojov a odhaduje celkovú silu útoku. Celková sila je odvodená od počtu a závažnosti všetkých útokov proti celej sieti. Predpoveď môže dať varovanie o prichádzajúcom zvýšení alebo znížení počtu kybernetických útokov na počítačovú sieť~\cite{Husak2018survey}.
+\textbf{Prístup sily útoku} spája informácie o prebiehajúcich útokoch z~rôznych zdrojov a odhaduje celkovú silu útoku. Celková sila je odvodená od~počtu a závažnosti všetkých útokov proti celej sieti. Predpoveď môže dať varovanie o prichádzajúcom zvýšení alebo znížení počtu kybernetických útokov na počítačovú sieť~\cite{Husak2018survey}.
 
-\section{Metódy predpovedí v časových radoch}
+\section{Metódy predpovedí v~časových radoch}
 
-Existuje množstvo metód kvantitatívneho predpovedania a ich použitie často závisí od konkrétnych disciplín, od povahy údajov alebo od konkrétnych účelov. Pri výbere konkrétnej metódy sa musia brať do úvahy vlastnosti, presnosť a výpočtové náklady. \textcolor{red}{?}
+Existuje množstvo metód kvantitatívneho predpovedania a ich použitie často závisí od~konkrétnych disciplín, od~povahy údajov alebo od~konkrétnych účelov. Pri výbere konkrétnej metódy sa musia brať do~úvahy vlastnosti, presnosť a výpočtové náklady.
 
-V našom výskume zvažujeme štyri prístupy k predpovedaniu časových radov: 
+V našom výskume zvažujeme štyri prístupy k~predpovedaniu časových radov: 
 \begin{compactenum}
     \item ARIMA modely,
     \item Exponenciálne vyhladzovacie modely (stavové modely),
@@ -247,11 +252,11 @@ V našom výskume zvažujeme štyri prístupy k predpovedaniu časových radov:
     \item kombinácia (priemer) modelov ARIMA a Exponenciálneho vyhladzovania.
 \end{compactenum}
 
-Najbežnejšie používané triedy modelov v modelovaní a predpovedaní časových radov sú ARIMA a Exponenciálne vyhladzovanie (ETS)~\cite{hyndman2018forecasting}. Modely sa často porovnávajú s naivnými metódami~\cite{brockwell2016introduction, box2015time}, ktoré dokážu spracovať veľké množiny údajov a nemajú vysoké výpočtové požiadavky. Slúžia ako meradlo predpovedí. V štatistických modeloch sa stretávame aj s myšlienkou spájania spriemernením alebo posilnením, ktorá je dnes v strojovom vzdelávaní veľmi populárna~\cite{Husak2018survey}. 
+Najbežnejšie používané triedy modelov v~modelovaní a predpovedaní časových radov sú ARIMA a Exponenciálne vyhladzovanie (ETS)~\cite{hyndman2018forecasting}. Modely sa často porovnávajú s~naivnými metódami~\cite{brockwell2016introduction, box2015time}, ktoré dokážu spracovať veľké množiny údajov a nemajú vysoké výpočtové požiadavky. Slúžia ako meradlo predpovedí. V~štatistických modeloch sa stretávame aj s~myšlienkou spájania spriemernením alebo posilnením, ktorá je dnes v~strojovom vzdelávaní veľmi populárna~\cite{Husak2018survey}. 
 
-Predpovede využívajúce modely rodiny ETS sa vyznačujú váženou kombináciou starších pozorovaní s novými. Nové pozorovania majú v porovnaní so staršími pozorovaniami relatívne vyššiu váhu. Exponenciálne vyhladzovanie odráža skutočnosť, že váhy sa exponenciálne znižujú s vekom pozorovania~\cite{hyndman2018forecasting,brockwell2016introduction}.
+Predpovede využívajúce modely rodiny ETS sa vyznačujú váženou kombináciou starších pozorovaní s~novými. Nové pozorovania majú v~porovnaní so~staršími pozorovaniami relatívne vyššiu váhu. Exponenciálne vyhladzovanie odráža skutočnosť, že váhy sa exponenciálne znižujú s~vekom pozorovania~\cite{hyndman2018forecasting,brockwell2016introduction}.
 
-Modely ARIMA predstavujú zovšeobecnenie triedy modelov ARMA, ktoré zahŕňajú širokú škálu nestacionárnych sérií. Tieto modely v konečnom počte diferenciácií zabezpečujú stacionárnosť časových radov, čo umožňuje použitie modelov ARMA. Modely ARMA sú kombináciou auto-regresie (AR) a kĺzavého priemeru (MA)~\cite{box2015time}. Trieda ETS poskytuje ďalší prístup k modelovaniu a predpovedaniu časových radov. Zatiaľ čo modely ETS sú založené na popise trendu a sezónnosti v údajoch, cieľom modelov ARIMA je popísať autokorelácie v údajoch~\cite{hyndman2018forecasting}. Obe triedy modelov môžu odrážať sezónnosť údajov.
+Modely ARIMA predstavujú zovšeobecnenie triedy modelov ARMA, ktoré zahŕňajú širokú škálu nestacionárnych sérií. Tieto modely v~konečnom počte diferenciácií zabezpečujú stacionárnosť časových radov, čo umožňuje použitie modelov ARMA. Modely ARMA sú kombináciou auto-regresie (AR) a kĺzavého priemeru (MA)~\cite{box2015time}. Trieda ETS poskytuje ďalší prístup k~modelovaniu a predpovedaniu časových radov. Zatiaľ čo modely ETS sú založené na popise trendu a sezónnosti v~údajoch, cieľom modelov ARIMA je popísať autokorelácie v~údajoch~\cite{hyndman2018forecasting}. Obe triedy modelov môžu odrážať sezónnosť údajov.
 
 ARIMA model možno vyjadriť vzorcom:
  
@@ -261,29 +266,42 @@ y_t^{(d)} = c + \sum_{i = 1} ^ {p} \phi_{i} y_{ti}^{(d)} + \sum_{j = 1}^{q} \the
  
 kde $y$ je séria diferencovaná $d$-krát, $c$ je konštanta, $p$ je stupeň autoregresie, $\phi_i$ sú koeficienty autoregresie, $q$ je stupeň kĺzavých priemerov, $\theta_J$ sú koeficienty kĺzavých priemerov a $\varepsilon_t$ sú chyby.
 
+Najjednoduchší ETS model možno vyjadriť vzorcami:
+
+\begin{equation}
+s_{0} = x_{0}; s_{t} = \alpha x_{t}+(1-\alpha )s_{t-1},\ t>0
+\end{equation}
+
+kde $\alpha$ je faktor vyhladenia, $0<\alpha <1$.
 
 \subsection{Vyhodnotenie presnosti algoritmov predpovedania časových radov}
 
-Výber metódy pre výpočet presnosti algoritmov alebo chyby závisí priamo od dátovej sady s akou sa pracuje a tiež od očakávaní od našich predikcií. Spôsoby akými môžeme merať chybu v predikciách sú poďla~\cite{hyndman2018forecasting}:  \textbf{chyby závislé od rozsahu}, \textbf{percentuálne vyjadrené chyby},  \textbf{škálované chyby}. 
+Výber metódy pre výpočet presnosti algoritmov alebo chyby závisí priamo od~dátovej sady s~akou sa pracuje a tiež od~očakávaní od~našich predikcií. Spôsoby akými môžeme merať chybu v~predikciách sú poďla~\cite{hyndman2018forecasting}:  \textbf{chyby závislé od~rozsahu}, \textbf{percentuálne vyjadrené chyby},  \textbf{škálované chyby}. 
 
-Pre chyby závislé od rozsahu platí, že sú v rovnakom rozsahu (škále) ako dátová sada. Preto takto vypočítaná chyba nemôže byť použitá v dátových sadách obsahujúcich rôzne jednotky. Dve najčastejšie používané metriky závislé od škály sú založené na absolútnych hodnotách chyby alebo na druhej mocnine chyby. Medzi tieto metriky patria aj MAE a RMSE. Metrika MAE je často aplikovaná na jedno- aj viac-rozmerných časových radoch s rovnakým rozsahom (škálou), pretože je ľahká pre pochopenie a tiež pre výpočet. Predikčná metóda upravovaná s cieľom čo najmenšej MAE chyby bude predikovať hodnoty zodpovedajúce mediánu, zatiaľ co predikčná metóda minimalizujúca chybu RMSE bude predikovať priemerné hodnoty. 
+Pre chyby závislé od~rozsahu platí, že sú v~rovnakom rozsahu (škále) ako dátová sada. Preto takto vypočítaná chyba nemôže byť použitá v~dátových sadách obsahujúcich rôzne jednotky. Dve najčastejšie používané metriky závislé od~škály sú založené na absolútnych hodnotách chyby alebo na druhej mocnine chyby. Medzi tieto metriky patria aj MAE a RMSE. Metrika MAE je často aplikovaná na jedno- aj viac-rozmerných časových radoch s~rovnakým rozsahom (škálou), pretože je ľahká pre pochopenie a tiež pre výpočet. Predikčná metóda upravovaná s~cieľom čo najmenšej MAE chyby bude predikovať hodnoty zodpovedajúce mediánu, zatiaľ co predikčná metóda minimalizujúca chybu RMSE bude predikovať priemerné hodnoty. 
 
-Výhodou percentuálne vyjadrených chýb je to, že neobsahujú jednotky a preto sú často používané pri porovnávaní predikčných modelov medzi rôznymi dátovými sadami. Hlavnou nevýhodou metrík založených na percentuálnej chybe je, že $y_{t} = 0$ tak budú nedefinované alebo v nekonečne, pre akúkoľvek hodnotu $t$. Taktiež ak $y_{t}$ obsahuje extrémne hodnoty tak percentuálna chyba bude veľmi malá. Táto metrika tiež nepasuje na všetky dátové sady v rôznych jednotkách, neplatí pre predpoveď teplôt ak kombinujeme časové rady v jednotke Fahrenheit a Celzius, pretože tieto jednotky nemajú spoločný nulový bod. Ďalšou nevýhodou percentuálne vyjadrených chýb je chýbajúca ekvivalentnosť pre záporné a kladné hodnoty. V záporných hodnotách je chyba neprimerane vyššia. Toto pozorovanie viedlo k vytvoreniu symetrickej MAPE metriky \cite{armstrong1985crystal} (SMAPE). Avšak SMAPE metrika stále nerieši problém extrémnych hodnôt, kde je chyba veľmi malá, blízka nule. 
+Výhodou percentuálne vyjadrených chýb je to, že neobsahujú jednotky a preto sú často používané pri porovnávaní predikčných modelov medzi rôznymi dátovými sadami. Hlavnou nevýhodou metrík založených na percentuálnej chybe je, že $y_{t} = 0$ tak budú nedefinované alebo v~nekonečne, pre akúkoľvek hodnotu $t$. Taktiež ak $y_{t}$ obsahuje extrémne hodnoty tak percentuálna chyba bude veľmi malá. Táto metrika tiež nepasuje na všetky dátové sady v~rôznych jednotkách, neplatí pre predpoveď teplôt ak kombinujeme časové rady v~jednotke Fahrenheit a Celzius, pretože tieto jednotky nemajú spoločný nulový bod. Ďalšou nevýhodou percentuálne vyjadrených chýb je chýbajúca ekvivalentnosť pre záporné a kladné hodnoty. V~záporných hodnotách je chyba neprimerane vyššia. Toto pozorovanie viedlo k~vytvoreniu symetrickej MAPE metriky \cite{armstrong1985crystal} (SMAPE). Avšak SMAPE metrika stále nerieši problém extrémnych hodnôt, kde je chyba veľmi malá, blízka nule. 
 
-\cite{hyndman2006another} prišli s alternatívnym riešením k percentuálnym chybám, škálovaným chybám. Navrhli škálovanie chyby na základe tréningu MAE z jednoduchej predikčnej metódy. Škálovaná chyba je menšia ako jedna, ak je výsledkom lepšej predpovede, ako je priemerná naivná predpoveď vypočítaná z trénovacích údajov. Naopak, je viac ako jedna, ak je predpoveď horšia ako priemerná naivná predpoveď vypočítaná z trénovacích údajov.
+\cite{hyndman2006another} prišli s~alternatívnym riešením k~percentuálnym chybám, škálovaným chybám. Navrhli škálovanie chyby na základe tréningu MAE z~jednoduchej predikčnej metódy. Škálovaná chyba je menšia ako jedna, ak je výsledkom lepšej predpovede, ako je priemerná naivná predpoveď vypočítaná z~trénovacích údajov. Naopak, je viac ako jedna, ak je predpoveď horšia ako priemerná naivná predpoveď vypočítaná z~trénovacích údajov.
 
-%\section{Predpoveď budúceho stavu siete}
+\section{Formulácia výskumných cieľov práce}
 
-%\textcolor{red}{Detailnejsi pohlad na forecast.}
+Udalosti s~ktorými budeme pracovať obsahujú dáta z~honeypotov, IDS systémov, sieťových prvkov ale aj z~logov produkčných systémov. Špecifikom týchto údajov je, že ich považujeme ako údaje o útokoch. Hlavným cieľom práce je navrhnúť model predikcie bezpečnostných udalostí v~reálnom čase pri zohľadnení kritérií kladených pre predikciu (forecasting) za použitia pomocných atribútov. Túto analýzu vykonáme na rôznych štatistických modeloch. Pri výbere modelov prihliadame na ich budúce využitie v~produkčných sieťach s~veľkým tokom údajov. Hlavným kritériom výberu je možnosť spracovania časovej jednotky rýchlejšie ako je samotná časová jednotka. Celkový cieľ práce je možné rozdeliť do~nasledujúcich parciálnych otázok:
+
+\begin{enumerate}
+  \item Ako nájsť správnu kombináciu atribútov pre vylepšenie predikcie časových radov v~nepretržitej prevádzke?
+  \item Ktoré predikčné modely sú vhodné pre využitie v~nepretržitej prevádzke?
+  \item Ako vyhodnocovať presnosť predikčných modelov na dátach kybernetickej bezpečnosti? Aké metriky sú vhodné pre tieto modely?
+\end{enumerate}
 
 \chapter{Výskumné ciele}
 
-Hlavným cieľom práce je navrhnúť model predikcie bezpečnostných udalostí v reálnom čase pri zohľadnení kritérií kladených pre predikciu (viď. podkapitola \ref{forecast}) za použitia pomocných atribútov. V práci analyzujeme dátovú sadu a hľadáme také atribúty, ktoré by smerovali k čo najcennejším časovým radom. Čiastkové ciele sa hlbšie venujú analýze metód pre predpoveď časových radov rôznych zdrojov. Túto analýzu vykonáme na rôznych štatistických modeloch. Pri výbere modelov prihliadame na ich budúce využitie v produkčných sieťach s veľkým tokom údajov. Hlavným kritériom výberu je možnosť spracovania časovej jednotky rýchlejšie ako je samotná časová jednotka. Na začiatku tejto kapitoly sa venujeme zberu a predspracovaniu údajov pomocou, ktorých budeme hľadať odpovede na výskumné otázky. V ďalších podkapitolách podrobnejšie diskutujeme k výskumným otázkam. Podkapitoly sú rozdelené na tri časti. V úvode každej podkapitoly je uvedený rozšírený popis daného cieľa. Potom v samostatnej sekcii analyzujeme aktuálny stav riešenia problematiky. V poslednej sekcii výskumného cieľa opisujeme metodológiu akou budeme ďalej postupovať vo výskume. 
+Hlavným cieľom práce je navrhnúť model predikcie bezpečnostných udalostí v~reálnom čase pri zohľadnení kritérií kladených pre predikciu (viď. podkapitola \ref{forecast}) za použitia pomocných atribútov. V~práci analyzujeme dátovú sadu a hľadáme také atribúty, ktoré by smerovali k~čo najcennejším časovým radom. Čiastkové ciele sa hlbšie venujú analýze metód pre predpoveď časových radov rôznych zdrojov. Túto analýzu vykonáme na rôznych štatistických modeloch. Pri výbere modelov prihliadame na ich budúce využitie v~produkčných sieťach s~veľkým tokom údajov. Hlavným kritériom výberu je možnosť spracovania časovej jednotky rýchlejšie ako je samotná časová jednotka. Na~začiatku tejto kapitoly sa venujeme zberu a predspracovaniu údajov pomocou, ktorých budeme hľadať odpovede na výskumné otázky. V~ďalších podkapitolách podrobnejšie diskutujeme k~výskumným otázkam. Podkapitoly sú rozdelené na tri časti. V~úvode každej podkapitoly je uvedený rozšírený popis daného cieľa. Potom v~samostatnej sekcii analyzujeme aktuálny stav riešenia problematiky. V~poslednej sekcii výskumného cieľa opisujeme metodológiu akou budeme ďalej postupovať vo~výskume. 
 
 \section{Zber a predspracovanie údajov}
-% \textcolor{red}{Popis datasetu aky mame. Priblizenia IDEA formatu a WARDENU. Tu bude rozobrane ze v datasete su len alerty. Taktiez tu budu predvedene a vysvetlene atributy. Mozno pridam aj graf v ktorom popisem zastupenie jednotlivych udajov/kategorii v datasete.}
+% \textcolor{red}{Popis datasetu aky mame. Priblizenia IDEA formatu a WARDENU. Tu bude rozobrane ze v~datasete su len alerty. Taktiez tu budu predvedene a vysvetlene atributy. Mozno pridam aj graf v~ktorom popisem zastupenie jednotlivych udajov/kategorii v~datasete.}
 
-Udalosti využité v tejto práci pochádzajú z platformy určenej pre zdieľanie bezpečnostných udalostí, WARDEN~\cite{kacha2015warden}. Hlavnými zdrojmi udalostí zasielaných do platformy WARDEN sú detekčné systémy IDS (angl. Intrusion Detection System), honeypoty, sondy sieťového toku (angl. netflow), logy z produkčných systémov a z ďalších monitorovacích zariadení nasadených vo viacerých sieťach. Najväčším počtom udalostí do platformy prispieva najmä združenie vysokých škôl a Akademie vied Českej republiky CESNET. Udalosti sú zdieľané vo formáte IDEA (angl. Intrusion Detection Extensible Alert). IDEA formát predstavuje definovanie schémy udalosti, ktoré sú ukladané v textovom JSON formáte~\cite{pezoa2016foundations}. Schéma definuje 4 povinné atribúty udalosti (formát, ID, čas detekcie, kategória)~\cite{kacha2014idea}. Definuje ďalšie voliteľné atribúty pre identifikáciu udalosti ako sú zdrojová a cieľová adresa. Okrem definovaných atribútov je IDEA schéma otvorená pre ďalšie vopred nedefinované atribúty. Pre náš výskum sú zaujímavé najmä tieto atribúty:
+Udalosti využité v~tejto práci pochádzajú z~platformy určenej pre zdieľanie bezpečnostných udalostí, WARDEN~\cite{kacha2015warden}. Hlavnými zdrojmi udalostí zasielaných do~platformy WARDEN sú detekčné systémy IDS (angl. Intrusion Detection System), honeypoty, sondy sieťového toku (angl. netflow), logy z~produkčných systémov a z~ďalších monitorovacích zariadení nasadených vo~viacerých sieťach. Najväčším počtom udalostí do~platformy prispieva najmä združenie vysokých škôl a Akademie vied Českej republiky CESNET. Udalosti sú zdieľané vo~formáte IDEA (angl. Intrusion Detection Extensible Alert). IDEA formát predstavuje definovanie schémy udalosti, ktoré sú ukladané v~textovom JSON formáte~\cite{pezoa2016foundations}. Schéma definuje 4 povinné atribúty udalosti (formát, ID, čas detekcie, kategória)~\cite{kacha2014idea}. Príklad IDEA udalosti je na obrázku č.~\ref{alg:idea}. Definuje ďalšie voliteľné atribúty pre identifikáciu udalosti ako sú zdrojová a cieľová adresa. Okrem definovaných atribútov je IDEA schéma otvorená pre ďalšie vopred nedefinované atribúty. Pre náš výskum sú zaujímavé najmä tieto atribúty:
 
 \begin{compactenum}
 \item kategória, 
@@ -293,25 +311,52 @@ Udalosti využité v tejto práci pochádzajú z platformy určenej pre zdieľan
 \item čas výskytu.
 \end{compactenum}
 
-Pre výskum disponujeme dátami zbieranými z platformy Warden od Decembra 2017. Zozbierané dáta za obdobie od 11.12.2017 do 11.12.2018 predstavujú približne miliardu udalostí zo zdrojov spomenutých vyššie. Technicky sú dáta uložené v SQLite súborovej databáze po dňoch. Dáta sú v databáze zoradené podľa času prijatia z platformy WARDEN. Dôvodom tohto spôsobu uloženia je vysoká efektivita pre výskumné zdieľanie údajov a tiež možnosť prehrať konkrétne obdobie v rovnakom poradí v akom nastalo. Veľkosť dennej databázy ku koncu roka 2018 bola približne 2 GB.
+\begin{figure}
+    \begin{lstlisting}[]  
+{
+   "Format": "IDEA0",
+   "ID": "70f326c4-e912-11ea-adc1-0242ac120002 ",
+   "CreateTime": "2018-01-03T15:45:18Z",
+   "DetectTime": "2018-01-03T15:45:20Z",
+   "Category": ["Attempt.Login"],
+   "Source": [
+      { "IP4": ["192.168.0.2-192.168.0.5", "192.168.0.10/25"] }
+   ],
+   "Target": [
+      { "IP4": ["10.2.2.0/24"], "Anonymised": true }
+   ]
+}
+    \end{lstlisting}
+    
+    \caption{Príklad jednoduchej správy v~IDEA formáte.}
+    \label{alg:idea}
+\end{figure}
 
-\subsection{Neustály príjem údajov z platformy WARDEN}
+Pre výskum disponujeme dátami zbieranými z~platformy Warden od~Decembra 2017. Zozbierané dáta za obdobie od~11.12.2017 do~11.12.2018 predstavujú približne miliardu udalostí zo~zdrojov spomenutých vyššie. Technicky sú dáta uložené v~SQLite súborovej databáze po dňoch. Dáta sú v~databáze zoradené podľa času prijatia z~platformy WARDEN. Dôvodom tohto spôsobu uloženia je vysoká efektivita pre výskumné zdieľanie údajov a tiež možnosť prehrať konkrétne obdobie v~rovnakom poradí v~akom nastalo. Veľkosť dennej databázy ku~koncu roka 2018 bola približne 2 GB.
 
-V reálnej prevádzke, udalosti z platformy WARDEN prichádzajú neustále. Preto potrebujeme aj pri našom výskume brať dôraz na tento fakt. Dátovú sadu máme pripravenú v zoradených SQLite súboroch. V práci budeme používať pojem prehrávania údajov, čo znamená vkladanie záznamov do algoritmu v takom poradí v akom sme ich prijali z platformy WARDEN. Pre prehrávanie budeme využívať technológiu Apache Kafka a tiež programovací jazyk Python. Apache Kafka je platforma podobná platforme WARDEN, slúži však na zdieľanie akýchkoľvek údajov v rôznych zdielaných vláknach. 
+\subsection{Neustály príjem údajov z~platformy WARDEN}
 
-\textcolor{red}{Prehratie databázy do Apache Kafka (python skript)\\
-Otvor spojenie s Apache Kafka\\
-Otvor SQLite databazu za den XYZ\\
-zaznamy = Nacitaj vsetky zaznamy zoradene podla datumu\\
-FOR(zaznam in zaznamy) \{\\
-posli zaznam do kafky\\
-\}}
+V reálnej prevádzke, udalosti z~platformy WARDEN prichádzajú neustále. Preto potrebujeme aj pri našom výskume brať dôraz na tento fakt. Dátovú sadu máme pripravenú v~zoradených SQLite súboroch. V~práci budeme používať pojem prehrávania údajov, čo znamená vkladanie záznamov do~algoritmu v~takom poradí v~akom sme ich prijali z~platformy WARDEN. Pre prehrávanie budeme využívať technológiu Apache Kafka a tiež programovací jazyk Python. Apache Kafka je platforma podobná platforme WARDEN, slúži však na zdieľanie akýchkoľvek údajov v~rôznych zdielaných vláknach. 
 
-Algoritmy, ktoré budeme ďalej využívať budu vždy prijímať údaje z Apache Kafka. Keďže WARDEN a Apache Kafka sú v spôsobe zdieľania veľmi podobné tak pre algoritmy z tejto práce to znamená len veľmi malé úpravy pre využitie v reálnej prevádzke.
+\begin{figure}
+    \begin{lstlisting}[]  
+const kafkaCon = ApacheKafka.openConnection("broker-ip-address", "broker-port-address");
+const dbCon = SQLite.openFile("databases/2018-08-01.sqlite");
+let records = dbCon.query("SELECT `message` FROM `records` ORDER BY `received_time` ASC")
+for (let record in records) {
+    kafkaCon.sendMessage("topic-name", record.message);
+}
+    \end{lstlisting}
+    
+    \caption{Pseudokód prehratia databázy do~Apache Kafka}
+    \label{alg:prehratie}
+\end{figure}
+
+Algoritmy, ktoré budeme ďalej využívať budu vždy prijímať údaje z~Apache Kafka. Keďže WARDEN a Apache Kafka sú v~spôsobe zdieľania veľmi podobné tak pre algoritmy z~tejto práce to znamená len veľmi malé úpravy pre využitie v~reálnej prevádzke.
 
 \subsection{Generovanie časových radov}
 
-Pre účely tohto výskumu budeme spracovávať jednoročné dáta (12.11.2017 až 12.11.2018) do časových radov na základe rôznych kritérií. Kritériá budú vybrané zo všetkých možných hodnôt atribútov kategórie, portu a protokolu štatistickým zastúpením v celej vzorke údajov. Kritérium musí byť zastúpené najmenej v 1~\%s údajov. Príkladmi atribútov sú: 
+Pre účely tohto výskumu budeme spracovávať jednoročné dáta (12.11.2017 až 12.11.2018) do~časových radov na základe rôznych kritérií. Kritériá budú vybrané zo~všetkých možných hodnôt atribútov kategórie, portu a protokolu štatistickým zastúpením v~celej vzorke údajov. Kritérium musí byť zastúpené najmenej v~1~\%s údajov. Príkladmi atribútov sú: 
 \begin{compactenum}
     \item Počet všetkých udalostí,
     \item Počet unikátnych IP adries,
@@ -324,33 +369,29 @@ Pre účely tohto výskumu budeme spracovávať jednoročné dáta (12.11.2017 a
     \item Protokol Microsoft WBT Server (angl. Windows-Based Terminal).
 \end{compactenum}
 
-Každému kritériu bude prislúchať samostatný časový rad. Základnou jednotkou týchto radov je 1 minúta a vždy obsahuje počet udalostí spĺňajúcich kritérium. To neplatí pre rady, ako je napríklad unikátnych IP adries, tento rad je naviac agregovaný aby obsahoval iba unikátne IP adresy zdrojov. Ďalej budú tieto časové rady spracované do viacerých verzií na základe zvoleného časového obdobia. Vytvoríme časové rady s časovým obdobím 1 minúta, 10 minút, 15 minút, 30 minút a 60 minút. Časové rady budú uložené v databáze PostgreSQL s rozšírením TimescaleDB. Rozšírenie TimescaleDB zefektívni agregácie časových radov na vytváranie rôznych pohľadov na dáta.
+Každému kritériu bude prislúchať samostatný časový rad. Základnou jednotkou týchto radov je 1 minúta a vždy obsahuje počet udalostí spĺňajúcich kritérium. To neplatí pre rady, ako je napríklad unikátnych IP adries, tento rad je naviac agregovaný aby obsahoval iba unikátne IP adresy zdrojov. Ďalej budú tieto časové rady spracované do~viacerých verzií na základe zvoleného časového obdobia. Vytvoríme časové rady s~časovým obdobím 1 minúta, 10 minút, 15 minút, 30 minút a 60 minút. Časové rady budú uložené v~databáze PostgreSQL s~rozšírením TimescaleDB. Rozšírenie TimescaleDB zefektívni agregácie časových radov na vytváranie rôznych pohľadov na dáta.
 
-Udalosti IDEA prehrávame pomocou vyššie uvedeného pseudokódu kódu do Apache Kafka. Následne pomocou python skriptu tieto udalosti čítame a priebežne vypočítavame časové rady pre všetky kritéria súčasne. Po každej prijatej minúte sa vypočítajú nové hodnoty a bodú uložené do PostreSQL databázy. V nasledujúcich grafoch sú znázornené údaje za obdobie \textcolor{red}{Marec 2018} pre vybrané kritériá.
+Udalosti IDEA prehrávame pomocou vyššie uvedeného pseudokódu kódu do~Apache Kafka. Následne pomocou python skriptu tieto udalosti čítame a priebežne vypočítavame časové rady pre všetky kritéria súčasne. Po každej prijatej minúte sa vypočítajú nové hodnoty a bodú uložené do~PostreSQL databázy. V~grafoch na obrázku č.~\ref{fig:timeseries_example} sú znázornené údaje za obdobie September 2018 pre vybrané kritériá.
 
-\textcolor{red}{Pridať grafy}\\
-\textcolor{red}{Pridať grafy}\\
-\textcolor{red}{Pridať grafy}\\
-\textcolor{red}{Pridať grafy}\\
-\textcolor{red}{Pridať grafy}\\
-\textcolor{red}{Pridať grafy}\\
-\textcolor{red}{Pridať grafy}\\
-\textcolor{red}{Pridať grafy}\\
-\textcolor{red}{Pridať grafy}\\
-\textcolor{red}{Pridať grafy}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/TestFig3.eps}
+  \caption{Náhľad časových radov za obdobie September 2018 a oblasti: All alerts - všetky udalosti; Category: Attempt.Login - Kategória pokus o prihlásenie; Category: Attept.Exploit - Kategória pokus o prienik; Protokol: UDP - Sieťový UDP protokol}
+  \label{fig:timeseries_example}
+\end{figure}
 
 \section{Atribúty predikčných modelov}
-V rámci prvého cieľa tejto práce sa venujeme výskumnej otázke \textbf{Ako nájsť správnu kombináciu atribútov pre vylepšenie predikcie časových radov v nepretržitej prevádzke?} príp. v inom znení \textbf{Ktoré atribúty je vhodné kombinovať pre zlepšenie predikcie časových radov v nepretržitej prevádzke?}
+V rámci prvého cieľa tejto práce sa venujeme výskumnej otázke \textbf{Ako nájsť správnu kombináciu atribútov pre vylepšenie predikcie časových radov v~nepretržitej prevádzke?} príp. v~inom znení \textbf{Ktoré atribúty je vhodné kombinovať pre zlepšenie predikcie časových radov v~nepretržitej prevádzke?}
 
-Náš zdroj údajov poskytuje udalosti z veľkého počtu rôznorodých senzorov. Senzory zbierajú údaje zo sieťovej prevádzky, zo zariadení, z logov ale aj honeypotov. Problém, ktorý analyzujeme týmto cieľom je, predspracovanie vstupných údajov. Snahou je zistiť, ktoré atribúty sú signifikantné pre identifikáciu útokov v sieti, tak aby sme ich predikciami dokázali upozorniť administrátorov o zmenách situácie počítačových sietí. Otázku by sme mohli formulovať aj takto: Ktoré parametre je vhodné kombinovať pre zlepšenie predikcie časových radov v nepretržitej prevádzke? alebo Aký vplyv má správny výber atribútov pre správnosť predikcií?
+Náš zdroj údajov poskytuje udalosti z~veľkého počtu rôznorodých senzorov. Senzory zbierajú údaje zo~sieťovej prevádzky, zo~zariadení, z~logov ale aj honeypotov. Problém, ktorý analyzujeme týmto cieľom je, predspracovanie vstupných údajov. Snahou je zistiť, ktoré atribúty sú signifikantné pre identifikáciu útokov v~sieti, tak aby sme ich predikciami dokázali upozorniť administrátorov o zmenách situácie počítačových sietí. Otázku by sme mohli formulovať aj takto: Ktoré parametre je vhodné kombinovať pre zlepšenie predikcie časových radov v~nepretržitej prevádzke? alebo Aký vplyv má správny výber atribútov pre správnosť predikcií?
 
 %\textcolor{red}{- popis otázky, zavedenie definícii, 
 % - rozvitie otázky, vysvetlenie, čo to znamená
 %}
 %1) Ktoré parametre (atribúty) sú kritické pre predikciu bezpečnostných udalostí/alertov používajúcu časové rady? Aký vplyv má na úspešnosť predikcie výber vhodných parametrov? Ako ovplyvňujú tieto parametre výber vhodných časových radov? \\
-% - tu by sa to rozbilo podľa typov predikcie s tým, že už máš niečo k security awareness
+% - tu by sa to rozbilo podľa typov predikcie s~tým, že už máš niečo k~security awareness
 
-V podobných prácach oblasti kybernetickej bezpečnosti sa stretávame s rôznymi dátovými sadami, s akými výskumníci pracujú. Je však možné ich rozdeliť na 6 najčastejšie vyskytujúcich sa kategórií vypísaných v tabuľke~\ref{tab:c1_datasets}. Keďže v tejto práci sa venujeme predpovedaniu kybernetickej situácie v počítačovej siete tak pre komplexnú analýzu vhodných atribútov je dobré vedieť aké výsledky nadobúdajú výskumníci aj z menej (blacklist) príp. viac (PCAP) robustných dátových sád.
+V podobných prácach oblasti kybernetickej bezpečnosti sa stretávame s~rôznymi dátovými sadami, s~akými výskumníci pracujú. Je však možné ich rozdeliť na 6 najčastejšie vyskytujúcich sa kategórií vypísaných v~tabuľke~\ref{tab:c1_datasets}. Keďže v~tejto práci sa venujeme predpovedaniu kybernetickej situácie v~počítačovej siete tak pre komplexnú analýzu vhodných atribútov je dobré vedieť aké výsledky nadobúdajú výskumníci aj z~menej (blacklist) príp. viac (PCAP) robustných dátových sád.
 
 \begin{table}[]
     \centering
@@ -365,7 +406,7 @@ V podobných prácach oblasti kybernetickej bezpečnosti sa stretávame s rôzny
          \hline Časový rad vyťaženia siete & \cite{cortez2012multi,hasegawa2001applications,papagiannaki2005long,sang2002predictability,wang2008internet} \\
          \hline
     \end{tabular}
-    \caption{Rozdelenie dátových sád do kategórií}
+    \caption{Rozdelenie dátových sád do~kategórií}
     \label{tab:c1_datasets}
 \end{table}
 
@@ -373,16 +414,16 @@ V podobných prácach oblasti kybernetickej bezpečnosti sa stretávame s rôzny
 
 \subsubsection{Jednorozmerné časové rady}
 
-Tabuľka~\ref{tab:ts_uni} zobrazuje prehľad využívaných atribútov časových radov v podobných prácach. Autori experimentovali s viacerými typmi údajov, avšak výrazne sa stretávame najmä s troma atribútmi \textbf{veľkosť alebo počet paketov} v sieťovej prevádzke, \textbf{počet zraniteľností} a \textbf{počet útokov}. Atribúty sú vo väčšine prípadov najväčší všeobecne vytvorený časový rad z dostupných údajov dátových sád. Napríklad z IDEA udalostí získame počet útokov ako súčet všetkých údajov, z dátovej sady netflow získame veľkosť prenesených paketov prípadne ich počet, a pod. Niekoľko autorov, ktorých spomenieme nižšie, sa hlbšie vnárajú do dátových sád a časové rady rozdeľujú podľa aplikácií, protokolov alebo portov. 
-Autori \cite{jiang2004detecting, wei2012intrusion,madan2018predicting, sang2002predictability,wang2008internet,hasegawa2001applications} pre svoj výskum predikcie situácie v počítačovej sieti využili najzákladnejšie údaje. Údaje pozostávali z dátového prenosu cez počítačové siete. Vo väčšine prípadov boli dáta z produkčných sietí. \cite{hasegawa2001applications} pre výskum použil prevádzkové dáta z backbone spojenia medzi Spojenými štátmi a Japonskom. \cite{jiang2004detecting} vo svojom výskume pristúpil viac kontrolovanému, simulovanému prostrediu. V takom prostredí presne vie čo sa dialo, podľa simulácie tiež pozná všetky vykonané útoky. V dátach z produkčných sietí môžeme mať veľký počet neodhalených útokov a mať skreslené informácie. Z prevádzkových príspevkov vyčnieva \cite{wei2012intrusion}, ktorý namiesto bežných počítačových sietí analyzuje bezdrôtové priemyselné siete. Táto oblasť sa dnes spolu s Internetom vecí presadzuje stále viac a preto si myslíme, že potvrdená aplikovateľnosť rovnakých princípov na tieto siete je prínosom.
+Tabuľka~\ref{tab:ts_uni} zobrazuje prehľad využívaných atribútov časových radov v~podobných prácach. Autori experimentovali s~viacerými typmi údajov, avšak výrazne sa stretávame najmä s~troma atribútmi \textbf{veľkosť alebo počet paketov} v~sieťovej prevádzke, \textbf{počet zraniteľností} a \textbf{počet útokov}. Atribúty sú vo~väčšine prípadov najväčší všeobecne vytvorený časový rad z~dostupných údajov dátových sád. Napríklad z~IDEA udalostí získame počet útokov ako súčet všetkých údajov, z~dátovej sady netflow získame veľkosť prenesených paketov prípadne ich počet, a pod. Niekoľko autorov, ktorých spomenieme nižšie, sa hlbšie vnárajú do~dátových sád a časové rady rozdeľujú podľa aplikácií, protokolov alebo portov. 
+Autori \cite{jiang2004detecting, wei2012intrusion,madan2018predicting, sang2002predictability,wang2008internet,hasegawa2001applications} pre svoj výskum predikcie situácie v~počítačovej sieti využili najzákladnejšie údaje. Údaje pozostávali z~dátového prenosu cez počítačové siete. Vo~väčšine prípadov boli dáta z~produkčných sietí. \cite{hasegawa2001applications} pre výskum použil prevádzkové dáta z~backbone spojenia medzi Spojenými štátmi a Japonskom. \cite{jiang2004detecting} vo~svojom výskume pristúpil viac kontrolovanému, simulovanému prostrediu. V~takom prostredí presne vie čo sa dialo, podľa simulácie tiež pozná všetky vykonané útoky. V~dátach z~produkčných sietí môžeme mať veľký počet neodhalených útokov a mať skreslené informácie. Z prevádzkových príspevkov vyčnieva \cite{wei2012intrusion}, ktorý namiesto bežných počítačových sietí analyzuje bezdrôtové priemyselné siete. Táto oblasť sa dnes spolu s~Internetom vecí presadzuje stále viac a preto si myslíme, že potvrdená aplikovateľnosť rovnakých princípov na tieto siete je prínosom.
 
-\cite{cortez2012multi} rozdelili dostupné dátové sady na 3 rôzne kategórie. V prvej sú dáta sieťovej prevádzky so zjavnou sezónnosťou, v druhej kategórii sú dáta s viditeľnou periódou avšak amplitúda v periódach je náhodná a v tretej kategórii sú dáta bez sezónnosti. Podľa publikovaného článku vo všetkých kategóriách mali chybu predikcií časových radov v rozmedzí 1-3~\%. \cite{hasegawa2001applications} vo svojom článku porovnával rôzne veľkosti časových jednotiek 10 sekúnd, 30 sekúnd alebo 60 sekúnd. Tieto na prvý pohľad malé jednotky získavajú väčší rozmer pri informácii o produkčnom zdroji údajov, ktorým je backbone medzi Spojenými Štátmi a Japonskom. Zaujímavý prístup k časovým radom je uvedený vo výskume \cite{papagiannaki2005long}. V tomto výskume autori pracujú so špeciálnym posuvným oknom kde starším údajom znižujú ich váhu. Môžu tak plynulo prechádzať na nové údaje a zároveň pracovať s časovo veľkým oknom časových jednotiek.
+\cite{cortez2012multi} rozdelili dostupné dátové sady na 3 rôzne kategórie. V~prvej sú dáta sieťovej prevádzky so~zjavnou sezónnosťou, v~druhej kategórii sú dáta s~viditeľnou periódou avšak amplitúda v~periódach je náhodná a v~tretej kategórii sú dáta bez sezónnosti. Podľa publikovaného článku vo~všetkých kategóriách mali chybu predikcií časových radov v~rozmedzí 1-3~\%. \cite{hasegawa2001applications} vo~svojom článku porovnával rôzne veľkosti časových jednotiek 10 sekúnd, 30 sekúnd alebo 60 sekúnd. Tieto na prvý pohľad malé jednotky získavajú väčší rozmer pri informácii o produkčnom zdroji údajov, ktorým je backbone medzi Spojenými Štátmi a Japonskom. Zaujímavý prístup k~časovým radom je uvedený vo~výskume \cite{papagiannaki2005long}. V~tomto výskume autori pracujú so~špeciálnym posuvným oknom kde starším údajom znižujú ich váhu. Môžu tak plynulo prechádzať na nové údaje a zároveň pracovať s~časovo veľkým oknom časových jednotiek.
 
-\cite{jiang2004detecting} vo svojom výskume primárne využívali veľkosť prenesených paketov za časovú jednotku, píšu však o testovaných alternatívnych radov rozdelených podľa počtu komunikujúcich používateľov alebo podľa počtu paketov. Taktiež diskutujú o možnosti rozdelenia časových radov podľa konkrétnych aplikácií ako napríklad sharepoint - zdieľanie dokumentov, internet, ekonomické aplikácie a iné analyzovateľné aplikácie v sieti.
+\cite{jiang2004detecting} vo~svojom výskume primárne využívali veľkosť prenesených paketov za časovú jednotku, píšu však o testovaných alternatívnych radov rozdelených podľa počtu komunikujúcich používateľov alebo podľa počtu paketov. Taktiež diskutujú o možnosti rozdelenia časových radov podľa konkrétnych aplikácií ako napríklad sharepoint - zdieľanie dokumentov, internet, ekonomické aplikácie a iné analyzovateľné aplikácie v~sieti.
 
-S ďalším veľmi zaujímavým prístupom prišli autori \cite{tang2016exploiting,roumani2015time,tang2018disclosure,tang2017big,pokhrel2017cybersecurity,werner2017time}. Vo svojich prácach vytvárali časové rady z počtu už zverejnených zraniteľností v dostupných databázach akou je aj Národná databáza zraniteľností (angl. National vulnerabilities database - NVD). Autor \cite{roumani2015time} využil prístup vnárania sa do časových radov a vytvoril ich podľa viacerých atribútov: podla závažnosti, podľa postihnutých aplikácií, podľa úrovne zverejnených informácií a podobne.
+S ďalším veľmi zaujímavým prístupom prišli autori \cite{tang2016exploiting,roumani2015time,tang2018disclosure,tang2017big,pokhrel2017cybersecurity,werner2017time}. Vo~svojich prácach vytvárali časové rady z~počtu už zverejnených zraniteľností v~dostupných databázach akou je aj Národná databáza zraniteľností (angl. National vulnerabilities database - NVD). Autor \cite{roumani2015time} využil prístup vnárania sa do~časových radov a vytvoril ich podľa viacerých atribútov: podla závažnosti, podľa postihnutých aplikácií, podľa úrovne zverejnených informácií a podobne.
 
-Pri jednorozmerných časových radoch sa stretávame aj s radmi reprezentujúcimi počet útokov za časové jednotky, \cite{zhan2015predicting} ako zdroj pre tieto časové rady využíva PCAP dátovú sadu zo siete honeypotov. Všetky spojenia smerujúce na honeypoty označujeme za útoky pretože legitímna komunikácia na honeypotoch nie je nasadzovaná. Autor \cite{fang2019deep} prispel s myšlienkou normalizácie časových radov počtu útokov, aby eliminoval extrémne hodnoty vyskytujúce sa v prevádzkových sieťových udalostiach. Rovnako ako v predchádzajúcich prístupoch aj pri počte útokov je autor \cite{condon2008analysis} venujúci sa rozbitiu časových radov na podľa rozdeľujúcich atribútov. V práci píše o detekčných nástrojoch pre známe bezpečnostné problémy akými napríklad sú: msblast, enbot, klez,  bagle, ircbot, agobot, rogueftp, nethicsreq, spamrelay, nachi.
+Pri jednorozmerných časových radoch sa stretávame aj s~radmi reprezentujúcimi počet útokov za časové jednotky, \cite{zhan2015predicting} ako zdroj pre tieto časové rady využíva PCAP dátovú sadu zo~siete honeypotov. Všetky spojenia smerujúce na honeypoty označujeme za útoky pretože legitímna komunikácia na honeypotoch nie je nasadzovaná. Autor \cite{fang2019deep} prispel s~myšlienkou normalizácie časových radov počtu útokov, aby eliminoval extrémne hodnoty vyskytujúce sa v~prevádzkových sieťových udalostiach. Rovnako ako v~predchádzajúcich prístupoch aj pri počte útokov je autor \cite{condon2008analysis} venujúci sa rozbitiu časových radov na podľa rozdeľujúcich atribútov. V~práci píše o detekčných nástrojoch pre známe bezpečnostné problémy akými napríklad sú: msblast, enbot, klez,  bagle, ircbot, agobot, rogueftp, nethicsreq, spamrelay, nachi.
 
 \begin{table}[]
     \centering
@@ -403,7 +444,7 @@ Pri jednorozmerných časových radoch sa stretávame aj s radmi reprezentujúci
 
 \subsubsection{Viacrozmerné časové rady}
 
-Niekedy všeobecná informácia jednorozmerných radov nemusí byť postačujúca a generovala by len väčší šum. V takých prípadoch je zaujímavejšie pri predikciách pozrieť sa viac do šírky. Autori \cite{shin2013advanced,ramaki2015real,marchette1999statistical} sa rozhodli tento problém riešiť viacrozmernými časovými radmi, kde pre jednu časovú jednotku majú namiesto hodnoty, vektor viacerých hodnôt podľa rôznych atribútov. \cite{marchette1999statistical} pracoval s údajmi netflow, jedným z atribútov netflow sú porty na akých zariadenia medzi sebou komunikujú a preto jeho viacrozmerné rady vychádzali práve z tohto atribútu. V článku vybrali 1~\% najčastejšie sa vyskytujúcich portov do viacrozmerného časového radu. Ďalší autor pracujúci s bezpečnostnými udalosťami, ktoré boli v dátovej sade kategorizované podľa využitých zraniteľností, sa rozhodol vytvoriť časové rady podľa tohto atribútu kategórií. Zaujímavý prístup publikoval \cite{shin2013advanced}, ktorý v časových radoch vyjadroval entropiu zdrojových ip adries a portov, entropiu veľkosti paketov, početnosť paketov atribútov (ICMP, UDP, TCP SYN) a tiež celkový počet paketov v časovej jednotke.
+Niekedy všeobecná informácia jednorozmerných radov nemusí byť postačujúca a generovala by len väčší šum. V~takých prípadoch je zaujímavejšie pri predikciách pozrieť sa viac do~šírky. Autori \cite{shin2013advanced,ramaki2015real,marchette1999statistical} sa rozhodli tento problém riešiť viacrozmernými časovými radmi, kde pre jednu časovú jednotku majú namiesto hodnoty, vektor viacerých hodnôt podľa rôznych atribútov. \cite{marchette1999statistical} pracoval s~údajmi netflow, jedným z~atribútov netflow sú porty na akých zariadenia medzi sebou komunikujú a preto jeho viacrozmerné rady vychádzali práve z~tohto atribútu. V~článku vybrali 1~\% najčastejšie sa vyskytujúcich portov do~viacrozmerného časového radu. Ďalší autor pracujúci s~bezpečnostnými udalosťami, ktoré boli v~dátovej sade kategorizované podľa využitých zraniteľností, sa rozhodol vytvoriť časové rady podľa tohto atribútu kategórií. Zaujímavý prístup publikoval \cite{shin2013advanced}, ktorý v~časových radoch vyjadroval entropiu zdrojových ip adries a portov, entropiu veľkosti paketov, početnosť paketov atribútov (ICMP, UDP, TCP SYN) a tiež celkový počet paketov v~časovej jednotke.
 
 %\begin{table}[]
 %    \centering
@@ -412,7 +453,7 @@ Niekedy všeobecná informácia jednorozmerných radov nemusí byť postačujúc
 %        \hline agregovane podla IP/24 subnetov, pouzivaju well-known porty a protokoly (najmä 139, 1433, 443, 445) & \cite{soldo2011blacklisting} \\
 %        \hline orezane flow data na prvych 50 bytov (rozdelene po kategoriach DOS, EXPLOITS, FUZZERS, GENERIC, RECONNAISSANCE, OTHER-MALICIOUS, NON-MALICIOUS, Total) & \cite{millar2019using} \\
 %        \hline flowy vytvorene podla hostov (userov) & \cite{bakhshi2015user} \\
-%        \hline sucet peerov, ratio roznych paketov v portadi, ratio destination portov, rozne entropie a pod. & \cite{jakalan2015profiling} \\
+%        \hline sucet peerov, ratio roznych paketov v~portadi, ratio destination portov, rozne entropie a pod. & \cite{jakalan2015profiling} \\
 %        \hline ip, dest. port, header length, udp length, dont fragment flag, TTL, Corrupted & \cite{berti2017profiling} \\
 %        \hline protocol, time, duration, packet, data exchanges, data received & \cite{hammerschmidt2016efficient} \\
 %        \hline 
@@ -421,31 +462,38 @@ Niekedy všeobecná informácia jednorozmerných radov nemusí byť postačujúc
 %    \label{tab:my_label}
 %\end{table}
 
-\subsection{Prístup k riešeniu výskumného cieľa} \label{c1_metodologia}
+\subsection{Prístup k~riešeniu výskumného cieľa} \label{c1_metodologia}
 
-V práci pracujeme s dátovou sadou od českej akademickej siete CESNET. Dátová sada obsahuje udalosti v IDEA formáte. V prvom rade sme urobili analýzu tejto dátovej sady aby sme získali bližší prehľad o početnosti udalostí v jednotlivých kategóriách, sieťových portoch, protokoloch a výraznej existencii ďalších atribútov. Pri úvodných analýzach zozbieraných údajov sa zistila nevhodnosť ich uloženia vo veľkej SQLite databáze bez akýchkoľvek indexov. Spôsob uloženia doteraz zozbieraných údajov sme upravili tak aby databáza obsahovala udalosti v rovnakom poradí v akom boli prijaté. Nový spôsob nebude vytvárať jednu veľkú databázu IDEA udalostí. S veľkou databázou sa spájajú viaceré analyzačné ale aj distribučné problémy. Preto sme nastavili obmedzenie na jednu SQLite databázu na jeden kalendárny deň. Získali sme tak síce veľa malých (1-3~GB) súborov, ale bez výkonnostných problémov dokážeme údaje prehrávať ale aj distribuovať ďalším výskumníkom za akokoľvek dlhé obdobie. 
+V práci pracujeme s~dátovou sadou od~českej akademickej siete CESNET. Dátová sada obsahuje udalosti v~IDEA formáte. V~prvom rade sme urobili analýzu tejto dátovej sady aby sme získali bližší prehľad o početnosti udalostí v~jednotlivých kategóriách, sieťových portoch, protokoloch a výraznej existencii ďalších atribútov. Pri úvodných analýzach zozbieraných údajov sa zistila nevhodnosť ich uloženia vo~veľkej SQLite databáze bez akýchkoľvek indexov. Spôsob uloženia doteraz zozbieraných údajov sme upravili tak aby databáza obsahovala udalosti v~rovnakom poradí v~akom boli prijaté. Nový spôsob nebude vytvárať jednu veľkú databázu IDEA udalostí. S~veľkou databázou sa spájajú viaceré analyzačné ale aj distribučné problémy. Preto sme nastavili obmedzenie na jednu SQLite databázu na jeden kalendárny deň. Získali sme tak síce veľa malých (1-3~GB) súborov, ale bez výkonnostných problémov dokážeme údaje prehrávať ale aj distribuovať ďalším výskumníkom za akokoľvek dlhé obdobie. 
 
-Tvorbu časových radov budeme vykonávať prehraním dátovej sady cez agregačný algoritmus. Tento algoritmus za každú minútu spočíta udalostí podľa zvolených významných kritérií a súčty uloží do databázy pre danú časovú jednotu. Prehranie dátovej sady prebieha cez technológiu posielania správ Apache Kafka a za databázu pre uloženie časových radov sme zvolili PostgreSQL s rozšírením pre efektívnu prácu s časovými radmi TimescaleDB. Prístup posielania správ je zvolený z dôvodu podpory neustáleho príjmu údajov. Pre spustenie rovnakého systému v reálnej prevádzke budeme potrebovať len presmerovať zber IDEA udalostí zo systému WARDEN do našej inštancie Apache Kafka.
+Tvorbu časových radov budeme vykonávať prehraním dátovej sady cez agregačný algoritmus. Tento algoritmus za každú minútu spočíta udalostí podľa zvolených významných kritérií a súčty uloží do~databázy pre danú časovú jednotu. Prehranie dátovej sady prebieha cez technológiu posielania správ Apache Kafka a za databázu pre uloženie časových radov sme zvolili PostgreSQL s~rozšírením pre efektívnu prácu s~časovými radmi TimescaleDB. Prístup posielania správ je zvolený z~dôvodu podpory neustáleho príjmu údajov. Pre spustenie rovnakého systému v~reálnej prevádzke budeme potrebovať len presmerovať zber IDEA udalostí zo~systému WARDEN do~našej inštancie Apache Kafka. Na~schéme č.~\ref{fig:c1_schema} je vizuálne znázornené fungovanie navrhovaného riešenia.
 
-Okrem doteraz získavaných údajov z dátovej sady je potrebné venovať sa aj doplneniu externých informácií. Za externé informácie považujeme napríklad databázu zraniteľností, tá bude tvoriť ďalšie časové rady a môže zvyšovať citlivosť predikčných algoritmov. Okrem zraniteľností vieme dohľadaním rozšírených informácii k IP adresám vytvoriť ďalšie časové rady zohľadňujúce spojenia s konkrétnymi krajinami, prípadne poskytovateľmi internetu.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/metodologia1.png}
+  \caption{Schéma od~zberu údajov cez internú distribúciu po spracovanie časových radov v~troch samostatných službách}
+  \label{fig:c1_schema}
+\end{figure}
+
+Okrem doteraz získavaných údajov z~dátovej sady je potrebné venovať sa aj doplneniu externých informácií. Za externé informácie považujeme napríklad databázu zraniteľností, tá bude tvoriť ďalšie časové rady a môže zvyšovať citlivosť predikčných algoritmov. Okrem zraniteľností vieme dohľadaním rozšírených informácii k~IP adresám vytvoriť ďalšie časové rady zohľadňujúce spojenia s~konkrétnymi krajinami, prípadne poskytovateľmi internetu.
 
 \section{Vhodnosť predikčných modelov}
-V druhom cieli tejto práce sa venujeme výskumnej otázke \textbf{Ktoré predikčné modely sú vhodné pre využitie v nepretržitej prevádzke?}
+V druhom cieli tejto práce sa venujeme výskumnej otázke \textbf{Ktoré predikčné modely sú vhodné pre využitie v~nepretržitej prevádzke?}
 
-V tejto práci sa venujeme najmä predpovedi situácie v počítačových sieťach. Dátovú sadu tohto čiastkového cieľa už máme v podobe jedno- aj viac- rozmerného časového radu. O dátovej sade tiež očakávame jej neustále generovanie a potrebujeme uvažovať aj nad jej časovou náročnosťou, aby pri využívaní predikčných modelov nenastávalo k časovému sklzu v predikciách a príjme nových údajoch. Hlavným cieľom témy tejto práce podľa rozdelenia z kapitoly \ref{discipliny} je predikcia kybernetickej situácie v počítačovej sieti, bližšie definovaná v \ref{forecast}.
+V tejto práci sa venujeme najmä predpovedi situácie v~počítačových sieťach. Dátovú sadu tohto čiastkového cieľa už máme v~podobe jedno- aj viac- rozmerného časového radu. O dátovej sade tiež očakávame jej neustále generovanie a potrebujeme uvažovať aj nad jej časovou náročnosťou, aby pri využívaní predikčných modelov nenastávalo k~časovému sklzu v~predikciách a príjme nových údajoch. Hlavným cieľom témy tejto práce podľa rozdelenia z~kapitoly \ref{discipliny} je predikcia kybernetickej situácie v~počítačovej sieti, bližšie definovaná v~\ref{forecast}.
 %doplnit definiciu online, onthefly alebo real-time spracovania
 
-% 2) Ktoré z ML modelov sú vhodné pre predikciu v reálnom čase? How do variations in the model’s training period affect the performance? Can we reuse a trained model for a given period of time and when do we need to retrain the model? Ako ovplyvňujú pamäťové nároky jednotlivých modelov dosiahnutie predikcie bezpečnostných udalostí/alertov v reálnom čase?\\
+% 2) Ktoré z~ML modelov sú vhodné pre predikciu v~reálnom čase? How do~variations in the model’s training period affect the performance? Can we reuse a trained model for a given period of time and when do~we need to retrain the model? Ako ovplyvňujú pamäťové nároky jednotlivých modelov dosiahnutie predikcie bezpečnostných udalostí/alertov v~reálnom čase?\\
 %  - delene metód na predikciu - podľa typov (ako to má M. Husák)\\
 %  - sezónnosť, časové okná\\
 %  - krátkodobé, dlhodobé predikcie a pod.\\
-%  - aké metódy používajú v článkoch\\ 
+%  - aké metódy používajú v~článkoch\\ 
 %  - aké sú kritéria pre on the fly alebo real-time predikciu\\
 
 \subsection{Aktuálny stav riešenej problematiky}
 
-Analýzou dostupnej literatúry k oblasti predikcii situácie v kybernetickej bezpečnosti sme dospeli k rozdeleniu na na 3 oblasti použitých metód:
-\textbf{štatistické metódy}, \textbf{neurónové siete} a ďalšie. Prehľad použitých metód podľa týchto je zobrazený v tabuľke~\ref{tab:c2_alg}. Aktuálne najvýznamnejšou oblasťou sú štatistické metódy, avšak v posledných rokoch je možné pozorovať nárast výskumnej aktivity v oblasti neurónových sietí. Obe tieto oblasti sú vhodné pre porovnanie našej práce a potvrdenie využitia týchto metód pre spracovanie v nepretržitých prevádzkach. Našli sme aj práce využívajúce klasifikačné metódy v reálnom čase pre za klasifikovanie sieťovej prevádzky a filtrovať tak veľký počet dát podľa správania sa útočníkov. Tieto dáta sú tiež zaujímavým prístupom ako pomocou klasifikačných metód odhaliť podvodné aktivity a zlepšiť informovanosť o aktuálnej situácii v počítačovej sieti.
+Analýzou dostupnej literatúry k~oblasti predikcii situácie v~kybernetickej bezpečnosti sme dospeli k~rozdeleniu na na 3 oblasti použitých metód:
+\textbf{štatistické metódy}, \textbf{neurónové siete} a ďalšie. Prehľad použitých metód podľa týchto je zobrazený v~tabuľke~\ref{tab:c2_alg}. Aktuálne najvýznamnejšou oblasťou sú štatistické metódy, avšak v~posledných rokoch je možné pozorovať nárast výskumnej aktivity v~oblasti neurónových sietí. Obe tieto oblasti sú vhodné pre porovnanie našej práce a potvrdenie využitia týchto metód pre spracovanie v~nepretržitých prevádzkach. Našli sme aj práce využívajúce klasifikačné metódy v~reálnom čase pre za klasifikovanie sieťovej prevádzky a filtrovať tak veľký počet dát podľa správania sa útočníkov. Tieto dáta sú tiež zaujímavým prístupom ako pomocou klasifikačných metód odhaliť podvodné aktivity a zlepšiť informovanosť o aktuálnej situácii v~počítačovej sieti.
 
 \begin{table}[]
     \centering
@@ -491,43 +539,53 @@ Analýzou dostupnej literatúry k oblasti predikcii situácie v kybernetickej be
          
          %\hline Markov model & \cite{shin2013advanced,sang2002predictability} \\
          %\hline 
-         % v texte \hline Wavelet (discrete + multiresolution) tranformacia & \cite{madan2018predicting,papagiannaki2005long} \\
-         % v texte \hline kobinacia ARIMA + RNN & \cite{madan2018predicting} \\
+         % v~texte \hline Wavelet (discrete + multiresolution) tranformacia & \cite{madan2018predicting,papagiannaki2005long} \\
+         % v~texte \hline kobinacia ARIMA + RNN & \cite{madan2018predicting} \\
         
          \hline
     \end{tabular}
-    \caption{Prehľad algoritmov v dostupnej literatúre}
+    \caption{Prehľad algoritmov v~dostupnej literatúre}
     \label{tab:c2_alg}
 \end{table}
 
-V oblasti štatistických metód urobili prehľad autori článku \cite{roumani2015time}. Pre predikcie využívali dátovú sadu zraniteľností v časových radoch rozdelenú podľa aplikácií. Pre každú aplikáciu, ale aj pre celkový časový rad testovali vhodnosť metód ARIMA a Holt-Winters. Taktiež testovali aj metódu sezónnej verzie ARIMA metódy (SARIMA). Vo svojej práci prezentujú najmenšiu percentuálnu chybu 12~\%. Autor \cite{tang2018disclosure} študoval ARCH efekt údajov o zraniteľnostiach pomocou rôznych GARCH modelov (generalizovaný ARCH). Autor tohto výskumu tvrdí, že najlepším modelom pre údaje počítačových zraniteľností je sGARCHstd(1,1), s overením pomocou Akaikeho informačného kritéria (AIC) a Bayesovho informačného kritéria (BIC).
+V oblasti štatistických metód urobili prehľad autori článku \cite{roumani2015time}. Pre predikcie využívali dátovú sadu zraniteľností v~časových radoch rozdelenú podľa aplikácií. Pre každú aplikáciu, ale aj pre celkový časový rad testovali vhodnosť metód ARIMA a Holt-Winters. Taktiež testovali aj metódu sezónnej verzie ARIMA metódy (SARIMA). Vo~svojej práci prezentujú najmenšiu percentuálnu chybu 12~\%. Autor \cite{tang2018disclosure} študoval ARCH efekt údajov o zraniteľnostiach pomocou rôznych GARCH modelov (generalizovaný ARCH). Autor tohto výskumu tvrdí, že najlepším modelom pre údaje počítačových zraniteľností je sGARCHstd(1,1), s~overením pomocou Akaikeho informačného kritéria (AIC) a Bayesovho informačného kritéria (BIC).
 
-Autori \cite{madan2018predicting,papagiannaki2005long} pridali pred využitie ARIMA metódy wavelet transformáciu do frekvenčného spektra. Využitím už spomenutej wavelet transformácie sa im podarilo eliminovať dlhodobo rastúci trend vyťaženosti backbone prevádzky. Autor \cite{madan2018predicting} okrem wavelet transformácie, svoje predikcie vykonal spojením metódy ARIMA a Rekurentnej neurónovej siete. Výsledná predikcia Ďalšej časovej jednotky je v jeho článku ako kombinácia predikcií oboch metód. Autor \cite{tang2016exploiting} porovnal vhodnosť využitia metód ARIMA a GARCH na dátovej sade zraniteľností. V práci objavili ARCH efekt a tvrdia že GARCH metódy predpovede dávajú lepšie výsledky na ich dátovej sade.
+Autori \cite{madan2018predicting,papagiannaki2005long} pridali pred využitie ARIMA metódy wavelet transformáciu do~frekvenčného spektra. Využitím už spomenutej wavelet transformácie sa im podarilo eliminovať dlhodobo rastúci trend vyťaženosti backbone prevádzky. Autor \cite{madan2018predicting} okrem wavelet transformácie, svoje predikcie vykonal spojením metódy ARIMA a Rekurentnej neurónovej siete. Výsledná predikcia Ďalšej časovej jednotky je v~jeho článku ako kombinácia predikcií oboch metód. Autor \cite{tang2016exploiting} porovnal vhodnosť využitia metód ARIMA a GARCH na dátovej sade zraniteľností. V~práci objavili ARCH efekt a tvrdia že GARCH metódy predpovede dávajú lepšie výsledky na ich dátovej sade.
 
-\cite{cortez2012multi} vo svojej práci využil predikcie pomocou metód ARIMA a Holt-Winters ako referenciu pre plne prepojenú viacvrstvovú neurónovú sieť s počtom uzlov od 1 do 289. Vo výsledkoch prezentujú zlepšenie predikcií oproti referenčným ARIMA a Holt Winters modelom o 0,4~\%. Podobnému porovnaniu sa venujú aj autori článku \cite{fang2019deep}. Referenčné výsledky z ARIMA modelu porovnávajú s rekurentnými neurónovými sieťami (RNN) s LSTM neurónmi. Vo svojej práci navrhli bidirectional-RNN-LSTM predikčnú neurónovú sieť. Ich výsledky experimentu na dátovej sade netflow sa však prikláňajú ku štatistickým metódam ARIMA. V diskusii autor uvádza o širších možnostiach vytvorenia siete obsahujúcej viac ako 4 LSTM neurónov, s potenciálne lepšími výsledkami. Ďalšie zaujímavé riešenie prináša článok \cite{millar2019using}, v ktorom sa dočítame o využití konvolučných neurónových sietí pre profilovanie sieťových spojení z netflow údajov. Vstupom do neurónovej siete je prvých 50 bajtov z netflow záznamu. Autori článku \cite{soldo2011blacklisting} po odhalení, že veľký počet útočiacich IP prefixov závisí od blízkej minulosti použili metódu exponenciálneho a váženého kĺzavého priemeru. V experimente porovnali svoje výsledky s Cross-Association metódou a predikcie s kĺzavým priemerom ukázali o 25~\% lepšie výsledky.
+\cite{cortez2012multi} vo~svojej práci využil predikcie pomocou metód ARIMA a Holt-Winters ako referenciu pre plne prepojenú viacvrstvovú neurónovú sieť s~počtom uzlov od~1 do~289. Vo~výsledkoch prezentujú zlepšenie predikcií oproti referenčným ARIMA a Holt Winters modelom o 0,4~\%. Podobnému porovnaniu sa venujú aj autori článku \cite{fang2019deep}. Referenčné výsledky z~ARIMA modelu porovnávajú s~rekurentnými neurónovými sieťami (RNN) s~LSTM neurónmi. Vo~svojej práci navrhli bidirectional-RNN-LSTM predikčnú neurónovú sieť. Ich výsledky experimentu na dátovej sade netflow sa však prikláňajú ku~štatistickým metódam ARIMA. V~diskusii autor uvádza o širších možnostiach vytvorenia siete obsahujúcej viac ako 4 LSTM neurónov, s~potenciálne lepšími výsledkami. Ďalšie zaujímavé riešenie prináša článok \cite{millar2019using}, v~ktorom sa dočítame o využití konvolučných neurónových sietí pre profilovanie sieťových spojení z~netflow údajov. Vstupom do~neurónovej siete je prvých 50 bajtov z~netflow záznamu. Autori článku \cite{soldo2011blacklisting} po odhalení, že veľký počet útočiacich IP prefixov závisí od~blízkej minulosti použili metódu exponenciálneho a váženého kĺzavého priemeru. V~experimente porovnali svoje výsledky s~Cross-Association metódou a predikcie s~kĺzavým priemerom ukázali o 25~\% lepšie výsledky.
 
-\cite{Leau2015} vo svojom článku analyzoval vhodnosť použitia neurónových sietí, Markovský modelov a Gray Theory modelov pre predikovanie situácie v kybernetickej bezpečnosti. V zhrnutí píše najmä o dôležitosti a robustnosti trénovacej dátovej sady pre neurónové siete aj Markovské modely. Často nedostatočné dátové sady spôsobujú vysoké percento chyby týchto modelov. Napriek tomu tvrdí, že Gray Theory môže poskytnúť dobré predikcie s malou vstupnou dátovou sadou a to bez nutnosti trénovania.
+\cite{Leau2015} vo~svojom článku analyzoval vhodnosť použitia neurónových sietí, Markovský modelov a Gray Theory modelov pre predikovanie situácie v~kybernetickej bezpečnosti. V~zhrnutí píše najmä o dôležitosti a robustnosti trénovacej dátovej sady pre neurónové siete aj Markovské modely. Často nedostatočné dátové sady spôsobujú vysoké percento chyby týchto modelov. Napriek tomu tvrdí, že Gray Theory môže poskytnúť dobré predikcie s~malou vstupnou dátovou sadou a to bez nutnosti trénovania.
 
-V článku \cite{shin2013advanced} navrhli nový spôsob klasifikácie situácií v kybernetickej bezpečnosti nazvaný APAN (angl. advanced probabilistic approach for network-based IDS). Tento spôsob označí aktuálni stav v sieti do jednej z piatich rizikových kategórií ({red, orange, yellow, blue, green}). Prístup sa skladá z troch fáz: (1) vykoná sa K-means klastrovanie so zohladnením outlierov, (2) je vytvorený Markov model s prechodovou maticou podľa klastrov, (3) v reálnom čase sa vyhodnotí rizikovosť aktuálnej prevádzky. Autori \cite{liu2015cloudy} analyzovali použiteľnosť Random Forest (RF) metódy pre predpovedanie kybernetickej situácie s 90~\% úspešnosťou detekcie podvodnej prevádzky. Svoje výsledky porovnali s metódou Support Vector machine (SVM), kde úspešnosť detekcie nepresiahla 70~\%. Pri RF metóde taktiež poukazujú len na 10~\% false-negatives v experimentoch.
+V článku \cite{shin2013advanced} navrhli nový spôsob klasifikácie situácií v~kybernetickej bezpečnosti nazvaný APAN (angl. advanced probabilistic approach for network-based IDS). Tento spôsob označí aktuálni stav v~sieti do~jednej z~piatich rizikových kategórií ({red, orange, yellow, blue, green}). Prístup sa skladá z~troch fáz: (1) vykoná sa K-means klastrovanie so~zohladnením outlierov, (2) je vytvorený Markov model s~prechodovou maticou podľa klastrov, (3) v~reálnom čase sa vyhodnotí rizikovosť aktuálnej prevádzky. Autori \cite{liu2015cloudy} analyzovali použiteľnosť Random Forest (RF) metódy pre predpovedanie kybernetickej situácie s~90~\% úspešnosťou detekcie podvodnej prevádzky. Svoje výsledky porovnali s~metódou Support Vector machine (SVM), kde úspešnosť detekcie nepresiahla 70~\%. Pri RF metóde taktiež poukazujú len na 10~\% false-negatives v~experimentoch.
 
-\subsection{Prístup k riešeniu výskumného cieľa}\label{c2_metodologia}
+\subsection{Prístup k~riešeniu výskumného cieľa}\label{c2_metodologia}
 
-Pre prácu v nepretržitej prevádzke je výhodnejšie využiť metódy s automatickým učiacim procesom. Takéto metódy sú navrhnuté tak, aby automaticky vyberali najlepší model. Učiace modely predikcií sa objavujú v rôznych nastaveniach. Pod nastaveniami rozumieme zlepšenú podporu pre sezónnosť vstupných údajov a spôsob akým budú údaje prichádzať do predikčných modelov. Budeme zvažovať sme aj 2 spôsoby učenia modelu. V prvom, klasickom prístupe, do modelu postupne vkladáme hodnoty ďalších časových jednotiek z trénovacej sady. V druhom spôsobe využívame tzv. posuvné okno, čo znamená, že predikčný algoritmus vždy vidí rovnako veľkú vstupnú dátovú sadu. Vždy po prijatí novej časovej jednotky je najstaršia časová jednotka odstránená. V tomto spôsobe sme schopný udržiavať rozumnú veľkosť vstupu predikcií pri použití v nepretržitej prevádzke.
+Pre prácu v~nepretržitej prevádzke je výhodnejšie využiť metódy s~automatickým učiacim procesom. Takéto metódy sú navrhnuté tak, aby automaticky vyberali najlepší model. Učiace modely predikcií sa objavujú v~rôznych nastaveniach. Pod nastaveniami rozumieme zlepšenú podporu pre sezónnosť vstupných údajov a spôsob akým budú údaje prichádzať do~predikčných modelov. Budeme zvažovať sme aj 2 spôsoby učenia modelu. V~prvom, klasickom prístupe, do~modelu postupne vkladáme hodnoty ďalších časových jednotiek z~trénovacej sady. V~druhom spôsobe využívame tzv. posuvné okno, čo znamená, že predikčný algoritmus vždy vidí rovnako veľkú vstupnú dátovú sadu. Vždy po prijatí novej časovej jednotky je najstaršia časová jednotka odstránená. V~tomto spôsobe sme schopný udržiavať rozumnú veľkosť vstupu predikcií pri použití v~nepretržitej prevádzke.
 
-Na začiatku, overenie nového modelu vypočítame 95~\% predikčného intervalu (bootstrap) a následne priemerné pokrytie. Priemerné pokrytie je percento spoľahlivosti intervalov, ktoré správne pokryli skutočné hodnoty časového radu. Percento by malo byť v okolí 95~\%, pretože potom predikcie fungujú dobre pre konkrétny prípad (tj. pre metódu, počet predikcií do budúcnosti a časový interval). Nižšie pokrytie ako 95~\% by znamenalo horšiu spoľahlivosť predikčného intervalu a vyššie pokrytie ako 95~\% znamená širší a menej informatívny interval.
+Na začiatku, overenie nového modelu vypočítame 95~\% predikčného intervalu (bootstrap) a následne priemerné pokrytie. Priemerné pokrytie je percento spoľahlivosti intervalov, ktoré správne pokryli skutočné hodnoty časového radu. Percento by malo byť v~okolí 95~\%, pretože potom predikcie fungujú dobre pre konkrétny prípad (tj. pre metódu, počet predikcií do~budúcnosti a časový interval). Nižšie pokrytie ako 95~\% by znamenalo horšiu spoľahlivosť predikčného intervalu a vyššie pokrytie ako 95~\% znamená širší a menej informatívny interval.
 
-V práci tiež zohľadňujeme priemernú dĺžku predikčných intervalov. Vo všeobecnosti sa kratšie predikčné intervaly považujú za presnejšie. Dávajú nám lepšie informácie o budúcich hodnotách časových radov. Naše hodnotenie rozdelíme do dvoch fáz. V prvej fáze budeme hodnotiť metódy predpovedí iba na základe celkového počtu upozornení a nebudeme riešiť sme kvalitatívnu zložku (kategória výstrah, sieťový port alebo sieťový protokol). Výskumní kolegovia sa v prechádzajúcej práci~\cite{new_paper} zaoberali 24 hodinovým obdobím a štyrmi rôznymi časovými jednotkami (5 minút, 15 minút, 30 minút and 60 minút) a veľkosťou dátovej sady obsahujúcej jeden týždeň udalostí. V tejto práci rozšírime tento príspevok o zložku neustáleho príjmu údajov a tiež o fakt, že k dispozícii už máme väčšie obdobie udalostí. Pre účely čiastkových výsledkov sme spracovali ročné údaje. Na základe predchádzajúcej práce sme sa rozhodli pracovať s 24 hodinovými a 7 dňovými obdobiami s dvoma rôznymi časovými jednotkami (30 minút a 60 minút) a dvoma rôznymi dĺžkami dátovej sady (1 mesiac a 2 mesiace). Hlavným cieľom tejto fázy je odpovedať na otázky sezónnosti a používania posuvných okien v perspektíve dlhodobého obdobia (jeden rok).
+V práci tiež zohľadňujeme priemernú dĺžku predikčných intervalov. Vo~všeobecnosti sa kratšie predikčné intervaly považujú za presnejšie. Dávajú nám lepšie informácie o budúcich hodnotách časových radov. Naše hodnotenie rozdelíme do~dvoch fáz. V~prvej fáze budeme hodnotiť metódy predpovedí iba na základe celkového počtu upozornení a nebudeme riešiť sme kvalitatívnu zložku (kategória výstrah, sieťový port alebo sieťový protokol). Výskumní kolegovia sa v~prechádzajúcej práci~\cite{new_paper} zaoberali 24 hodinovým obdobím a štyrmi rôznymi časovými jednotkami (5 minút, 15 minút, 30 minút and 60 minút) a veľkosťou dátovej sady obsahujúcej jeden týždeň udalostí. V~tejto práci rozšírime tento príspevok o zložku neustáleho príjmu údajov a tiež o fakt, že k~dispozícii už máme väčšie obdobie udalostí. Pre účely čiastkových výsledkov sme spracovali ročné údaje. Na~základe predchádzajúcej práce sme sa rozhodli pracovať s~24 hodinovými a 7 dňovými obdobiami s~dvoma rôznymi časovými jednotkami (30 minút a 60 minút) a dvoma rôznymi dĺžkami dátovej sady (1 mesiac a 2 mesiace). Hlavným cieľom tejto fázy je odpovedať na otázky sezónnosti a používania posuvných okien v~perspektíve dlhodobého obdobia (jeden rok).
 
-V druhej fáze našej evaluácie používame najlepšiu kombináciu časového intervalu, periódy a predpovedného obdobia (30 minút, 7 dní, jeden mesiac). V tejto fáze vyhodnocujeme metódy predpovedania 21 atribútov udalostí a zaoberáme sa kvalitatívnou zložkou (kategória udalostí, sieťový port alebo sieťový protokol). Hlavným cieľom tejto fázy je analyzovať sezónnosť a využitie posuvných okien v iných časových radoch s prihliadnutím na kvalitatívnu zložku. Analyzujeme tiež kritériá pre časové rady vhodné na predpovedanie.
+V druhej fáze našej evaluácie používame najlepšiu kombináciu časového intervalu, periódy a predpovedného obdobia (30 minút, 7 dní, jeden mesiac). V~tejto fáze vyhodnocujeme metódy predpovedania 21 atribútov udalostí a zaoberáme sa kvalitatívnou zložkou (kategória udalostí, sieťový port alebo sieťový protokol). Hlavným cieľom tejto fázy je analyzovať sezónnosť a využitie posuvných okien v~iných časových radoch s~prihliadnutím na kvalitatívnu zložku. Analyzujeme tiež kritériá pre časové rady vhodné na predpovedanie.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/metodologia2.png}
+  \caption{Architektúra distribúcie časových radov do~modelov.}
+  \label{fig:c2_schema}
+\end{figure}
+
+
+Architektúra riešenia tohto cieľa je znázornená na obrázku č.~\ref{fig:c2_schema}. Na~vstupe predikcií je neustále vytváraný a ukladaný časový rad. Rad je pri uložení znova distribuovaný pomocou platformy Apache Kafka, kde môžeme mať inštancií predikčných modelov postavených na rôznych časových radoch.
 
 \section{Presnosť predikčných modelov}
 V tomto cieli práce hľadáme odpovede na výskumnú otázku \textbf{Ako vyhodnocovať presnosť predikčných modelov na dátach kybernetickej bezpečnosti? Aké metriky sú vhodné pre tieto modely?}
 
-Porovnanie predikčných algoritmov je veľmi dôležité, bez neho by sme nedokázali povedať či naša navrhnutá metóda je lepšia alebo horšia od pôvodnej. Pre porovnania však potrebujeme matematický model (nazývame aj metrika), ktorý vypočíta celkovú chybu vypočítaných predikcií. Existuje však množstvo spôsobov pre výpočet chyby a nie je možné s určitosťou vybrať ten najlepší. 
+Porovnanie predikčných algoritmov je veľmi dôležité, bez neho by sme nedokázali povedať či naša navrhnutá metóda je lepšia alebo horšia od~pôvodnej. Pre porovnania však potrebujeme matematický model (nazývame aj metrika), ktorý vypočíta celkovú chybu vypočítaných predikcií. Existuje však množstvo spôsobov pre výpočet chyby a nie je možné s~určitosťou vybrať ten najlepší. 
 
 \subsection{Aktuálny stav riešenej problematiky}
 
-Výber metódy pre výpočet chyby závisí priamo od dátovej sady s akou pracujeme a tiež od očakávaní od našich predikcií. Spôsoby akými môžeme merať chybu v predikciách sú podľa~\cite{hyndman2018forecasting}:  \textbf{chyby závislé od rozsahu}, \textbf{percentuálne vyjadrené chyby},  \textbf{škálované chyby}. 
+Výber metódy pre výpočet chyby závisí priamo od~dátovej sady s~akou pracujeme a tiež od~očakávaní od~našich predikcií. Spôsoby akými môžeme merať chybu v~predikciách sú podľa~\cite{hyndman2018forecasting}:  \textbf{chyby závislé od~rozsahu}, \textbf{percentuálne vyjadrené chyby},  \textbf{škálované chyby}. V~tabuľke č.~\ref{tab:c3_metrics} je prehľad metrík s~akými sa stretávame v~dostupnej literatúre aj s~uvedením zápisu konkrétnych metrík. V~zápise metrík $y_t$ je pozorovaná/nameraná hodnota, $\hat{y}_{t}$ je odhad hodnoty a $n$ prislúcha celkovému počtu hodnôt, z~ktorých sa metrika počíta.
 
 \begin{longtable}[p]{ | p{4cm} | p{5cm} | p{5cm} | }
     \caption{Prehľad použitých metrík v literatúre.}
@@ -540,50 +598,49 @@ Výber metódy pre výpočet chyby závisí priamo od dátovej sady s akou pracu
     \hline \textbf{Metrika} & \textbf{Zápis} & \textbf{Použitie v literatúre}\\
     \midrule
      \endhead
-     \hline \textbf{MAE} - Mean Absolute Error & $${{\frac {\sum _{i=1}^{n}\left|y_{i}-x_{i}\right|}{n}}}$$ & \cite{tang2018disclosure} \\
-     \hline \textbf{RSME} - Root Mean Square Error & $${{\sqrt {\frac {\sum _{t=1}^{T}({\hat {y}}_{t}-y_{t})^{2}}{T}}}}$$ & \cite{tang2018disclosure,tang2017big,condon2008analysis} \\
-     \hline MAD - Mean Absolute Deviation & $${{\frac {1}{n}}\sum _{i=1}^{n}{\left|{y_{i}-{\hat {y}}_{i}}\right|}}$$ & \cite{fang2019deep} \\
-     \hline MSE - Mean Square Error & $${{\frac {1}{n}}\sum _{i=1}^{n}(y_{i}-{\hat {y_{i}}})^{2}.}$$ & \cite{fang2019deep,werner2017time} \\
-     \hline NMSE - Normalized Mean Square Error & $$\frac{n*\sum _{i=1}^{n}\left|x_{i} - y_{i}\right|^{2}}{\sum _{i=1}^{n}{x_{i}} * \sum _{i=1}^{n}{y_{i}}}$$ & \cite{zang2019adaptive,madan2018predicting} \\
-     \hline SSE - Sum Squared Error & $${\sum _{i=1}^{n}(y_{i}-f(x_{i}))^{2}}$$ & \cite{cortez2012multi} \\
+     \hline \textbf{MAE} - Mean Absolute Error & $${{\frac {\sum _{t=1}^{n}\left|y_{t}-\hat{y}_{t}\right|}{n}}}$$ & \cite{tang2018disclosure} \\
+     \hline \textbf{RSME} - Root Mean Square Error & $${{\sqrt {\frac {\sum _{t=1}^{n}({y}_{t}-\hat{y}_{t})^{2}}{n}}}}$$ & \cite{tang2018disclosure,tang2017big,condon2008analysis} \\
+     \hline \textbf{MAD} - Mean Absolute Deviation & $${{\frac {1}{n}}\sum _{t=1}^{n}{\left|{y_{t}-{\hat {y}}_{t}}\right|}}$$ & \cite{fang2019deep} \\
+     \hline \textbf{MSE} - Mean Square Error & $${{\frac {1}{n}}\sum _{t=1}^{n}(y_{t}-{\hat {y_{t}}})^{2}.}$$ & \cite{fang2019deep,werner2017time} \\
+     \hline \textbf{NMSE} - Normalized Mean Square Error & $$\frac{n\cdot\sum _{t=1}^{n}\left|y_{t} - \hat{y}_{t}\right|^{2}}{\sum _{t=1}^{n}{y_{t}} \cdot \sum _{t=1}^{n}{\hat{y}_{t}}}$$ & \cite{zang2019adaptive,madan2018predicting} \\
+     \hline \textbf{SSE} - Sum Squared Error & $${\sum _{t=1}^{n}(y_{t}-\hat{y}_{t})^{2}}$$ & \cite{cortez2012multi} \\
     
-     \hline \textbf{MAPE} - Mean Absolute Percentage Error & $${\frac  {1}{n}}\sum _{{t=1}}^{n}\left|{\frac  {A_{t}-F_{t}}{A_{t}}}\right|$$ & \cite{jiang2004detecting,cortez2012multi,fang2019deep,tang2018disclosure,werner2017time} \\
-     \hline \textbf{SMAPE} - Symetric Mean Absolute Percent Error & $${\frac {100\%}{n}}\sum _{t=1}^{n}{\frac {\left|F_{t}-A_{t}\right|}{(|A_{t}|+|F_{t}|)/2}}$$ & \cite{roumani2015time,pokhrel2017cybersecurity} \\
-     \hline PMAD - Percent Mean Absolute Deviation & $${\frac {\sum _{i=1}^{n}\left|y_{i}-{\hat {y}}_{i}\right|}{\sum _{i=1}^{n}\left|y_{i}\right|}}$$ & \cite{fang2019deep,zhan2015predicting} \\
+     \hline \textbf{MAPE} - Mean Absolute Percentage Error & $${\frac  {1}{n}}\sum _{{t=1}}^{n}\left|{\frac  {y_{t}-\hat{y}_{t}}{y_{t}}}\right|$$ & \cite{jiang2004detecting,cortez2012multi,fang2019deep,tang2018disclosure,werner2017time} \\
+     \hline \textbf{SMAPE} - Symetric Mean Absolute Percent Error & $${\frac {100\%}{n}}\sum _{t=1}^{n}{\frac {\left|y_{t}-\hat{y}_{t}\right|}{(|y_{t}|+|\hat{y}_{t}|)/2}}$$ & \cite{roumani2015time,pokhrel2017cybersecurity} \\
+     \hline \textbf{PMAD} - Percent Mean Absolute Deviation & $${\frac {\sum _{t=1}^{n}\left|y_{t}-{\hat {y}}_{t}\right|}{\sum _{t=1}^{n}\left|y_{t}\right|}}$$ & \cite{fang2019deep,zhan2015predicting} \\
      
-     \hline BIC - Bayesian Information Criterion & $${n\ln({\frac {1}{n}}\sum _{i=1}^{n}({x_{i}-{\widehat {x_{i}}})^{2}})+k\ln(n)\ }$$ & \cite{tang2016exploiting} \\
-     \hline AIC - Akaike Information Criterion & $${2k-2\ln({\hat {L}})}$$ & \cite{tang2016exploiting,zhan2015predicting,wei2012intrusion} \\
+     \hline \textbf{BIC} - Bayesian Information Criterion & $${n\ln({\frac {1}{n}}\sum _{t=1}^{n}({y_{t}-{\widehat {y_{t}}})^{2}})+k\ln(n)\ }$$ & \cite{tang2016exploiting} \\
+     \hline \textbf{AIC} - Akaike Information Criterion & $${2k-2\ln({\hat {L}})}$$ & \cite{tang2016exploiting,zhan2015predicting,wei2012intrusion} \\
      \hline
 
 \end{longtable}
 
+Pre chyby závislé od~rozsahu platí, že sú v~rovnakom rozsahu (škále) ako dátová sada. Preto takto vypočítaná chyba nemôže byť použitá v~dátových sadách obsahujúcich rôzne jednotky. Dve najčastejšie používané metriky závislé od~škály sú založené na absolútnych hodnotách chyby alebo na druhej mocnine chyby. Medzi tieto metriky patria aj MAE a RMSE. Napriek tomu že RMSE je zložitejšou metrikou je pomerne často využívanou \cite{tang2018disclosure,tang2017big,condon2008analysis}. 
 
-Pre chyby závislé od rozsahu platí, že sú v rovnakom rozsahu (škále) ako dátová sada. Preto takto vypočítaná chyba nemôže byť použitá v dátových sadách obsahujúcich rôzne jednotky. Dve najčastejšie používané metriky závislé od škály sú založené na absolútnych hodnotách chyby alebo na druhej mocnine chyby. Medzi tieto metriky patria aj MAE a RMSE. Napriek tomu že RMSE je zložitejšou metrikou je pomerne často využívanou \cite{tang2018disclosure,tang2017big,condon2008analysis}. 
+Výhody percentuálne vyjadrených chýb, najčastejšie, pomocou metriky MAPE využívajú vo~svojom výskume autori \cite{jiang2004detecting,cortez2012multi,fang2019deep,tang2018disclosure,werner2017time}. V~oblasti kybernetickej bezpečnosti metriku SMAPE, ktorá rieši neadekvátne tresty za záporné hodnoty, využívajú autori \cite{roumani2015time,pokhrel2017cybersecurity}.
 
-Výhody percentuálne vyjadrených chýb, najčastejšie, pomocou metriky MAPE využívajú vo svojom výskume autori \cite{jiang2004detecting,cortez2012multi,fang2019deep,tang2018disclosure,werner2017time}. V oblasti kybernetickej bezpečnosti metriku SMAPE, ktorá rieši neadekvátne tresty za záporné hodnoty, využívajú autori \cite{roumani2015time,pokhrel2017cybersecurity}.
-
-Ďalšou metódou, ktorá sa výraznejšie vyskytuje v podobných prácach \cite{tang2016exploiting,zhan2015predicting,wei2012intrusion} je Akaikeho informačné kritérium (AIC). Toto kritérium odmeňuje dobrú predpoveď, zahŕňa však aj pokutu, ktorá je zvyšujúcou sa funkciou počtu odhadovaných parametrov. Pokuta zamedzuje od nadmerného učenia, ktoré je nežiaduce, pretože zvýšenie počtu parametrov v modeli takmer vždy zlepšuje kvalitu predpovedí ale zvyšuje aj časovú náročnosť. Podobný prístup ako AIC prináša aj Bayesove informačné kritérium (BIC), v ktorom je vyššia pokuta za nadmerné učenie. Tento prístup spolu s AIC využili v článku \cite{tang2016exploiting}.
+Ďalšou metódou, ktorá sa výraznejšie vyskytuje v~podobných prácach \cite{tang2016exploiting,zhan2015predicting,wei2012intrusion} je Akaikeho informačné kritérium (AIC). Toto kritérium odmeňuje dobrú predpoveď, zahŕňa však aj pokutu, ktorá je zvyšujúcou sa funkciou počtu odhadovaných parametrov. Pokuta zamedzuje od~nadmerného učenia, ktoré je nežiaduce, pretože zvýšenie počtu parametrov v~modeli takmer vždy zlepšuje kvalitu predpovedí ale zvyšuje aj časovú náročnosť. Podobný prístup ako AIC prináša aj Bayesove informačné kritérium (BIC), v~ktorom je vyššia pokuta za nadmerné učenie. Tento prístup spolu s~AIC využili v~článku \cite{tang2016exploiting}.
 
 % 3) How to evaluate real-time predictions in cyber security and what metrics should be used? What is proposed system performance in identifying the upcoming security events/alerts and how does its performance compare to the baseline and state-of-the-art methods? Is it sufficient to rely on evaluation using datasets and testbeds or can the actual prediction accuracy be measured in a live network setting? \\
 %  - porovnať metódy (všeobecne) \\
-%  - porovnať metódy použité v článkoch - napr. ktoré metódy sa pri akých údajoch, akých typoch predikcií používajú \\
-%  - pozrieť diskusie v článkoch - postačujú len datasety? Ako porovnávať s inými údajmi \\
+%  - porovnať metódy použité v~článkoch - napr. ktoré metódy sa pri akých údajoch, akých typoch predikcií používajú \\
+%  - pozrieť diskusie v~článkoch - postačujú len datasety? Ako porovnávať s~inými údajmi \\
 %  - urobit porovnanie metrik \\
 
-\subsection{Prístup k riešeniu výskumného cieľa}
+\subsection{Prístup k~riešeniu výskumného cieľa}
  
-Vyhodnotenie kvality predpovedí vybraných modelov budeme robiť pomocou krížovej validácie~\cite{hyndman2018forecasting}. Použijeme dve variácie tohto prístupu. V prvom prípade vypočítame predpovede v konkrétnych budúcich časoch (osobitne pre jeden alebo dva alebo päť alebo desať krokov do budúcnosti) testovacej sady a na konci vypočítame metrickú hodnotu zo všetkých predpovedí pre rôzne predikčné kroky osobitne.  V druhom prípade krížovej validácie budeme zvažovať všetky prognózy až do druhého, piateho a desiateho kroku predpovede. V každom kole hodnotenia, ktoré vypočítame rovnakou metrikou ako v prvom prípade.
+Vyhodnotenie kvality predpovedí vybraných modelov budeme robiť pomocou krížovej validácie~\cite{hyndman2018forecasting}. Použijeme dve variácie tohto prístupu. V~prvom prípade vypočítame predpovede v~konkrétnych budúcich časoch (osobitne pre jeden alebo dva alebo päť alebo desať krokov do~budúcnosti) testovacej sady a na konci vypočítame metrickú hodnotu zo~všetkých predpovedí pre rôzne predikčné kroky osobitne.  V~druhom prípade krížovej validácie budeme zvažovať všetky prognózy až do~druhého, piateho a desiateho kroku predpovede. V~každom kole hodnotenia, ktoré vypočítame rovnakou metrikou ako v~prvom prípade.
 
-V rámci budúcej práce tento postup zopakujeme s rôznymi dátovými sadami (podľa metodológie~\ref{c1_metodologia}), modelmi (podľa metodológie~\ref{c2_metodologia}) a metrikami z tejto podkapitoly. Pri výbere použitej metriky budeme na základe podobných prác uvažovať nad ich použiteľnosťou na našu dátovú sadu, dôležitými parametrami pre použitie boli rovnaké jednotky pri prvej skupine, prípadne rôzne jednotky pri percentuálnej skupine metrík. Pri percentuálnych nemôžeme zabudnúť na obmedzenie pri veľmi malých hodnotách, ktoré by mohli viesť k nedefinovaným alebo nekonečným výsledkom.
+V rámci budúcej práce tento postup zopakujeme s~rôznymi dátovými sadami (podľa metodológie~\ref{c1_metodologia}), modelmi (podľa metodológie~\ref{c2_metodologia}) a metrikami z~tejto podkapitoly. Pri výbere použitej metriky budeme na základe podobných prác uvažovať nad ich použiteľnosťou na našu dátovú sadu, dôležitými parametrami pre použitie boli rovnaké jednotky pri prvej skupine, prípadne rôzne jednotky pri percentuálnej skupine metrík. Pri percentuálnych nemôžeme zabudnúť na obmedzenie pri veľmi malých hodnotách, ktoré by mohli viesť k~nedefinovaným alebo nekonečným výsledkom.
 
 \chapter{Parciálne výsledky}
 
-% Doposiaľ sme sa nevenovali zahrnutím externých údajov, ktoré plánujeme v najbližšom období. 
-Spracovali sme dátovú sadu do časových radov podľa metodológie~\ref{c1_metodologia}. Vytvorené časové rady sú uložené v PostgreSQL databáze a pripravili sme z nich viac verzií agregovaných po jednej minúte, desiatich minútach, pätnástich minútach, tridsiatich minútach a šesťdesiatich minútach. Takéto rady sme vytvorili pre každý z 21 zvolených atribútov: (1) Počet všetkých udalostí, (2) Počet unikátnych IP adries, (3)  Kategória skenovanie zariadenia, (4) Kategória preťaženie služby DDoS (angl. Denial of service), (5) Kategória pokus o prihlásenie, (6) Kategória pokus o zneužitie, (7) Kategória malware / ransomware, (8) Kategória prinik botnetu, (9) Port 21, (10) Port 22, (11) Port 23, (12) Port 25, (13) Port 80, (14) Port 443, (15) Port 445, (16) Protokol TCP (angl. Transmission Control Protocol), (17) Protokol SSH (angl. Secure Shell), (18) Protokol UDP (angl. User Datagram Protocol), (19) Protokol ICMP (angl. Internet Control Message Protocol), (20) Protokol Microsoft WBT Server (angl. Windows-Based Terminal), (21) Protokol Telnet.
+% Doposiaľ sme sa nevenovali zahrnutím externých údajov, ktoré plánujeme v~najbližšom období. 
+Spracovali sme dátovú sadu do~časových radov podľa metodológie~\ref{c1_metodologia}. Vytvorené časové rady sú uložené v~PostgreSQL databáze a pripravili sme z~nich viac verzií agregovaných po jednej minúte, desiatich minútach, pätnástich minútach, tridsiatich minútach a šesťdesiatich minútach. Takéto rady sme vytvorili pre každý z~21 zvolených atribútov: (1) Počet všetkých udalostí, (2) Počet unikátnych IP adries, (3)  Kategória skenovanie zariadenia, (4) Kategória preťaženie služby DDoS (angl. Denial of service), (5) Kategória pokus o prihlásenie, (6) Kategória pokus o zneužitie, (7) Kategória malware / ransomware, (8) Kategória prinik botnetu, (9) Port 21, (10) Port 22, (11) Port 23, (12) Port 25, (13) Port 80, (14) Port 443, (15) Port 445, (16) Protokol TCP (angl. Transmission Control Protocol), (17) Protokol SSH (angl. Secure Shell), (18) Protokol UDP (angl. User Datagram Protocol), (19) Protokol ICMP (angl. Internet Control Message Protocol), (20) Protokol Microsoft WBT Server (angl. Windows-Based Terminal), (21) Protokol Telnet.
 
-Pripravenú dátovú sadu časových radov sme exportovali do .csv súborov aby sme ich mohli analyzovať v jazyku R a v jednej z najrozšírenejších knižníc pre predikcie časových radov nazývanej Forecast r-package~\cite{hyndman2007automatic}. Pre prácu v nepretržitej prevádzke je výhodnejšie využiť metódy s automatickým učiacim procesom, v spomenutom R rozšírení k takým patrí ARIMA alebo ETS. Tieto metódy sú navrhnuté tak, aby automaticky vybrali najlepší model, ktorý bude zohľadňovať zadanú metriku~\cite{hyndman2007automatic}.
+Pripravenú dátovú sadu časových radov sme exportovali do~.csv súborov aby sme ich mohli analyzovať v~jazyku R a v~jednej z~najrozšírenejších knižníc pre predikcie časových radov nazývanej Forecast r-package~\cite{hyndman2007automatic}. Pre prácu v~nepretržitej prevádzke je výhodnejšie využiť metódy s~automatickým učiacim procesom, v~spomenutom R rozšírení k~takým patrí ARIMA alebo ETS. Tieto metódy sú navrhnuté tak, aby automaticky vybrali najlepší model, ktorý bude zohľadňovať zadanú metriku~\cite{hyndman2007automatic}.
 
-Pre každú triedu modelov boli konkrétne modely testované v sezónnom a ne-sezónnom nastavení. Rozhodli sme sa vybrať posledné dva mesiace z celého jednoročného súboru údajov z dôvodu časovej zložitosti našej rozsiahlej predikčnej štúdie. Je možné predpokladať, že hodnoty časových radov v minulosti (pokiaľ ide o časové jednotky) by nemali výrazný vplyv na predpovede budúcich hodnôt. Zvažovali sme aj 2 spôsoby učenia modelu, uvedené v metodológii~\ref{c2_metodologia}, klasický a tzv. posuvné oknom. Pre účely čiastkových výsledkov prvej fázy sme sa rozhodli pracovať s 24 hodinovými a 7 dňovými obdobiami s dvoma rôznymi časovými jednotkami (30 minút a 60 minút), a dvoma rôznymi dĺžkami dátovej sady (1 mesiac a 2 mesiace). V druhej fáze našej evaluácie čiastkových výsledkov používame najlepšiu kombináciu časového intervalu, periódy a predpovedného obdobia (30 minút, 7 dní, jeden mesiac). V tejto fáze vyhodnocujeme metódy predpovedania 21 atribútov udalostí a zaoberáme sa kvalitatívnou zložkou (kategória udalostí, sieťový port alebo sieťový protokol).
+Pre každú triedu modelov boli konkrétne modely testované v~sezónnom a ne-sezónnom nastavení. Rozhodli sme sa vybrať posledné dva mesiace z~celého jednoročného súboru údajov z~dôvodu časovej zložitosti našej rozsiahlej predikčnej štúdie. Je možné predpokladať, že hodnoty časových radov v~minulosti (pokiaľ ide o časové jednotky) by nemali výrazný vplyv na predpovede budúcich hodnôt. Zvažovali sme aj 2 spôsoby učenia modelu, uvedené v~metodológii~\ref{c2_metodologia}, klasický a tzv. posuvné oknom. Pre účely čiastkových výsledkov prvej fázy sme sa rozhodli pracovať s~24 hodinovými a 7 dňovými obdobiami s~dvoma rôznymi časovými jednotkami (30 minút a 60 minút), a dvoma rôznymi dĺžkami dátovej sady (1 mesiac a 2 mesiace). V~druhej fáze našej evaluácie čiastkových výsledkov používame najlepšiu kombináciu časového intervalu, periódy a predpovedného obdobia (30 minút, 7 dní, jeden mesiac). V~tejto fáze vyhodnocujeme metódy predpovedania 21 atribútov udalostí a zaoberáme sa kvalitatívnou zložkou (kategória udalostí, sieťový port alebo sieťový protokol).
 
 V nasledujúcich sekciách podrobnejšie opisujeme obe fázy vyhodnotenia experimentu. Podrobnejšie sa pozrieme na jednotlivé výsledky a na základe nich diskutujeme o čiastkových otázkach.
 
@@ -592,7 +649,7 @@ V nasledujúcich sekciách podrobnejšie opisujeme obe fázy vyhodnotenia experi
 %-------------------------------------------------------
 \section{Prvá fáza predikcií časových radov}
 
-V rámci hodnotenia sme v prvej fáze testovali všetky vyššie uvedené metódy v šiestich prípadoch (časový interval, časové obdobie, časová jednotka): 
+V rámci hodnotenia sme v~prvej fáze testovali všetky vyššie uvedené metódy v~šiestich prípadoch (časový interval, časové obdobie, časová jednotka): 
 \begin{compactenum}
     \item 30 minút, 24 hodín, 1 mesiac; 
     \item 30 minút, 7 dní, 1 mesiac; 
@@ -606,7 +663,7 @@ V rámci hodnotenia sme v prvej fáze testovali všetky vyššie uvedené metód
 
 % ------------- cross-validation  -----------------------------
 
-Prvým prístupom na vyhodnotenie kvality predpovedí konkrétnych modelov je tzv. Krížová validácia~\cite {hyndman2018forecasting}. Použili sme dve variácie tohto prístupu. V prvom prípade sme vypočítali predpovede v konkrétnych budúcich časoch (osobitne pre jeden alebo dva alebo päť alebo desať krokov do budúcnosti) testovacej sady a na konci sme vypočítali metrickú hodnotu zo všetkých predpovedí pre rôzne predikčné kroky osobitne. Použili sme metriku, priemerná absolútna miera chybovosti (MASE)~\cite{hyndman2006another}, bežne používanú na vyhodnotenie presnosti prognózy.
+Prvým prístupom na vyhodnotenie kvality predpovedí konkrétnych modelov je tzv. Krížová validácia~\cite {hyndman2018forecasting}. Použili sme dve variácie tohto prístupu. V~prvom prípade sme vypočítali predpovede v~konkrétnych budúcich časoch (osobitne pre jeden alebo dva alebo päť alebo desať krokov do~budúcnosti) testovacej sady a na konci sme vypočítali metrickú hodnotu zo~všetkých predpovedí pre rôzne predikčné kroky osobitne. Použili sme metriku, priemerná absolútna miera chybovosti (MASE)~\cite{hyndman2006another}, bežne používanú na vyhodnotenie presnosti prognózy.
 Je to uprednostňovaná metrika, pretože je menej citlivá na odľahlé hodnoty, ľahšie interpretovateľná a menej variabilná na malých vzorkách.
 
 Metrika MASE je definovaná ako~\cite{hyndman2018forecasting}:
@@ -622,7 +679,7 @@ kde $q_j$ pre časové rady bez sezónnosti je:
 q_j= \frac{e_j}{\frac{1}{T-1} \sum_{i=2}^{T}|y_i - y_{i-1}|},
 \end{equation}
 % 
-a $q_j$ pre časové rady so sezónnosťou je:
+a $q_j$ pre časové rady so~sezónnosťou je:
 % 
 \begin{equation} 
 q_j = \frac{e_j}{\frac{1}{T-m} \sum_{i=m+1}^{T}|y_i - y_{i-m}|}
@@ -630,7 +687,7 @@ q_j = \frac{e_j}{\frac{1}{T-m} \sum_{i=m+1}^{T}|y_i - y_{i-m}|}
 
 V oboch prípadoch, $e_j$ je predikčná chyba, to znamená, rozdiel medzi pozorovanou a predikovanou hodnotou. $y_j$ predstavuje pozorovanú hodnotu, $T$ je dĺžka časového radu a $m$ je parameter sezónnosti (perióda).
 
-V druhom type krížovej validácie sme zvažovali všetky prognózy až do druhého, piateho a desiateho kroku predpovede v každom kole hodnotenia, pre ktoré vypočítavame MASE (nielen poslednú ako v predchádzajúcom prípade). Podľa tohto kritéria je predpoveď presnejšia, keď sa dosiahne nižšia hodnota (ideálne pod 1) MASE. Zmenšená chyba je menšia ako jedna, ak je výsledkom lepšej predpovede, ako je priemerná naivná predpoveď vypočítaná z údajov tréningu. Naopak, je viac ako jedna, ak je predpoveď horšia ako priemerná naivná predpoveď vypočítaná na základe údajov tréningu~\cite{hyndman2014measuring}.
+V druhom type krížovej validácie sme zvažovali všetky prognózy až do~druhého, piateho a desiateho kroku predpovede v~každom kole hodnotenia, pre ktoré vypočítavame MASE (nielen poslednú ako v~predchádzajúcom prípade). Podľa tohto kritéria je predpoveď presnejšia, keď sa dosiahne nižšia hodnota (ideálne pod 1) MASE. Zmenšená chyba je menšia ako jedna, ak je výsledkom lepšej predpovede, ako je priemerná naivná predpoveď vypočítaná z~údajov tréningu. Naopak, je viac ako jedna, ak je predpoveď horšia ako priemerná naivná predpoveď vypočítaná na základe údajov tréningu~\cite{hyndman2014measuring}.
 
 \begin{table}[h]
     \centering
@@ -649,15 +706,15 @@ V druhom type krížovej validácie sme zvažovali všetky prognózy až do druh
         & AEsw, AEw & AEsw, AEw & AEsw, AEw & AEsw, AEw & AEsw, AEw & AEsw, AEw  \\
         \hline     
     \end{tabular}
-    \caption{Výsledky priemerných hodnôt MASE pre predikčné metódy. Poznámky: A - ARIMA model; E - Exponenciálne vyhladzovanie (state space models); N - naivný model; AE - ARIMA + Exponenciálne vyhladzovanie (priemer); s - so sezónnosťou; (s) - so sezónnosťou pre každý model v bunke; w - posuvné okno.}
+    \caption{Výsledky priemerných hodnôt MASE pre predikčné metódy. Poznámky: A - ARIMA model; E - Exponenciálne vyhladzovanie (state space models); N - naivný model; AE - ARIMA + Exponenciálne vyhladzovanie (priemer); s~- so~sezónnosťou; (s) - so~sezónnosťou pre každý model v~bunke; w - posuvné okno.}
     \label{tab:mase}
 \end{table}
 
-Tabuľka~\ref{tab:mase} zobrazuje výsledky priemerných hodnôt MASE pre dvojkrokové predpovede, predpovede pre päť krokov a predpovede pre 10 krokov vypočítané z celej sady učení. Okrem jedného prípadu (60 minút, 7 dní, 2 mesiace), kde boli všetky hodnoty pod 1. Celkovo sa zdá byť najlepšou metódou kombinácia (priemer) modelov ARIMA a Exponenciálneho vyhladzovania s posuvným oknom. V prípade druhého typu krížovej validácie (priemerné hodnoty MASE) má táto metóda najlepšie výsledky vo všetkých sledovaných prípadoch. Metóda ETS sa javí ako vhodná metóda v 60-minútových intervaloch. Naopak, za 30 minút má metóda ARIMA najlepšie výsledky pre prognózy na 5 krokov a 10 krokov.
+Tabuľka~\ref{tab:mase} zobrazuje výsledky priemerných hodnôt MASE pre dvojkrokové predpovede, predpovede pre päť krokov a predpovede pre 10 krokov vypočítané z~celej sady učení. Okrem jedného prípadu (60 minút, 7 dní, 2 mesiace), kde boli všetky hodnoty pod 1. Celkovo sa zdá byť najlepšou metódou kombinácia (priemer) modelov ARIMA a Exponenciálneho vyhladzovania s~posuvným oknom. V~prípade druhého typu krížovej validácie (priemerné hodnoty MASE) má táto metóda najlepšie výsledky vo~všetkých sledovaných prípadoch. Metóda ETS sa javí ako vhodná metóda v~60-minútových intervaloch. Naopak, za 30 minút má metóda ARIMA najlepšie výsledky pre prognózy na 5 krokov a 10 krokov.
 
 % ------------- prediction interval  -----------------------------
 
-Druhým prístupom k hodnoteniu kvality predpovedí konkrétnych modelov je priemerné pokrytie 95~\% podľa predikčných intervalov. Použili sme uvedených šesť prípadov a porovnali sme zavedené predikčné prístupy na základe rôznych predikčných krokov - nasledujúci, druhý, piaty a desiaty krok do budúcnosti.
+Druhým prístupom k~hodnoteniu kvality predpovedí konkrétnych modelov je priemerné pokrytie 95~\% podľa predikčných intervalov. Použili sme uvedených šesť prípadov a porovnali sme zavedené predikčné prístupy na základe rôznych predikčných krokov - nasledujúci, druhý, piaty a desiaty krok do~budúcnosti.
 
 \begin{table}[h]
     \centering
@@ -679,20 +736,20 @@ Druhým prístupom k hodnoteniu kvality predpovedí konkrétnych modelov je prie
         & A & A & AEsr & Ns, Nr & Er & Ns, Nr \\
         \hline
     \end{tabular}
-    \caption{Priemerné percento pokrytia skutočných (budúcich) hodnôt časových radov v 95~\% predikčných intervaloch. Poznámky: A - ARIMA model; E - Exponenciálne vyhladenie (state space models); N - naivný model; AE - ARIMA + Exponenciálne vyhladenie (priemer); ALL - všetky modely; (-) - bez; s - so sezónnosťou; w - posuvné okno.}
+    \caption{Priemerné percento pokrytia skutočných (budúcich) hodnôt časových radov v~95~\% predikčných intervaloch. Poznámky: A - ARIMA model; E - Exponenciálne vyhladenie (state space models); N - naivný model; AE - ARIMA + Exponenciálne vyhladenie (priemer); ALL - všetky modely; (-) - bez; s~- so~sezónnosťou; w - posuvné okno.}
     \label{tab:avg_95}
 \end{table}
 
-Tabuľka~\ref{tab:avg_95} zobrazuje výsledky priemerného pokrytia 95~\% predikčných intervalov. Hodnoty priemerného pokrytia v dvoch prípadoch s časovou jednotkou 30 minút (mesačné údaje) a v dvoch prípadoch s časovou jednotkou 60 minút (dvojmesačné údaje) sú blízko nominálnej hodnoty 95 a tieto intervaly predpovedí nie sú príliš široké. Znamená to, že sú celkom presné. Naopak, hodnoty priemerného pokrytia v dvoch prípadoch so 60-minútovými časovými intervalmi a dvojmesačnými údajmi sú pod nominálnou hodnotou 95, takže tieto predikčné intervaly nie sú príliš spoľahlivé alebo sa môžu považovať za skreslené.
+Tabuľka~\ref{tab:avg_95} zobrazuje výsledky priemerného pokrytia 95~\% predikčných intervalov. Hodnoty priemerného pokrytia v~dvoch prípadoch s~časovou jednotkou 30 minút (mesačné údaje) a v~dvoch prípadoch s~časovou jednotkou 60 minút (dvojmesačné údaje) sú blízko nominálnej hodnoty 95 a tieto intervaly predpovedí nie sú príliš široké. Znamená to, že sú celkom presné. Naopak, hodnoty priemerného pokrytia v~dvoch prípadoch so~60-minútovými časovými intervalmi a dvojmesačnými údajmi sú pod nominálnou hodnotou 95, takže tieto predikčné intervaly nie sú príliš spoľahlivé alebo sa môžu považovať za skreslené.
 
-Hlavným cieľom prvej fázy experimentálneho hodnotenia bolo určiť vhodný prípad. Podľa vyššie uvedených výsledkov je najvhodnejším scenárom pre nami zvolenú metodiku prípad s mesačnými údajmi, časovými intervalmi 30 minút, obdobím 7 dní. Vhodnosť výberu 7-dňového obdobia potvrdzuje aj výskum založený na časovo orientovanej analýze a vizualizácii údajov zozbieraných honeypotmi~\cite{sokol2015study}. Súbor údajov s týmito parametrami sa následne podrobnejšie analyzoval v druhej fáze.
+Hlavným cieľom prvej fázy experimentálneho hodnotenia bolo určiť vhodný prípad. Podľa vyššie uvedených výsledkov je najvhodnejším scenárom pre nami zvolenú metodiku prípad s~mesačnými údajmi, časovými intervalmi 30 minút, obdobím 7 dní. Vhodnosť výberu 7-dňového obdobia potvrdzuje aj výskum založený na časovo orientovanej analýze a vizualizácii údajov zozbieraných honeypotmi~\cite{sokol2015study}. Súbor údajov s~týmito parametrami sa následne podrobnejšie analyzoval v~druhej fáze.
 
 %-------------------------------------------------------
 % The second stage - results
 %-------------------------------------------------------
 \section{Druhá fáza predikcií časových radov}
 
-V druhej fáze sme testovali všetky vyššie uvedené metódy s najlepším prípadom z prvej fázy (30 minút, 7 dní, 1 mesiac) na 16-tich vybraných časových radoch. Z procesu hodnotenia bolo odstránených šesť časových radov, pretože obsahovali malé počty (menej ako 100 - napr. DDoS dostupnosti kategórie) alebo väčšinou obsahovali nuly (napr. Malware kategórie - ransomware). Ak sú počty dostatočne veľké (viac ako 100), potom rozdiel medzi spojitým priestorom a diskrétnym priestorom nemá viditeľný vplyv na predpovede~\cite{hyndman2018forecasting}. Ak však naše údaje obsahujú malé počty (menej ako 100), musíme použiť predikčné metódy, ktoré sú vhodnejšie pre priestor malých nezáporných celých čísel. Za takú možno považovať napríklad Crostonovu metódu~\cite{Croston1972ForecastingAS, Christou2015}. Na druhej strane časové rady s väčšinou núl môžu byť vhodné na detekciu anomálií časových radov~\cite{mehrotra2017anomaly} a je to zaujímavý smer pre budúci výskum.
+V druhej fáze sme testovali všetky vyššie uvedené metódy s~najlepším prípadom z~prvej fázy (30 minút, 7 dní, 1 mesiac) na 16-tich vybraných časových radoch. Z procesu hodnotenia bolo odstránených šesť časových radov, pretože obsahovali malé počty (menej ako 100 - napr. DDoS dostupnosti kategórie) alebo väčšinou obsahovali nuly (napr. Malware kategórie - ransomware). Ak sú počty dostatočne veľké (viac ako 100), potom rozdiel medzi spojitým priestorom a diskrétnym priestorom nemá viditeľný vplyv na predpovede~\cite{hyndman2018forecasting}. Ak však naše údaje obsahujú malé počty (menej ako 100), musíme použiť predikčné metódy, ktoré sú vhodnejšie pre priestor malých nezáporných celých čísel. Za takú možno považovať napríklad Crostonovu metódu~\cite{Croston1972ForecastingAS, Christou2015}. Na~druhej strane časové rady s~väčšinou núl môžu byť vhodné na detekciu anomálií časových radov~\cite{mehrotra2017anomaly} a je to zaujímavý smer pre budúci výskum.
 
 \begin{table}[h]
     \centering
@@ -711,13 +768,13 @@ V druhej fáze sme testovali všetky vyššie uvedené metódy s najlepším pr�
         & AEsw, AEw & AEsw, AEw & AEsw, AEw & AEsw, AEw & As, Asw, A & AEsw, AEw & AEsw, AEw & AEsw, AEw  \\
         \hline     
     \end{tabular}
-    \caption{Výsledky priemerných hodnôt MASE pre predikčné metódy. Poznámky: A - ARIMA model; E - Exponenciálne vyhladenie (state space models); N - naivný model; AE - ARIMA + Exponenciálne vyhladenie (priemer); s - so sezónnosťou; (s) - so sezónnosťou pre každý model v bunke; w - posuvné okno.}
+    \caption{Výsledky priemerných hodnôt MASE pre predikčné metódy. Poznámky: A - ARIMA model; E - Exponenciálne vyhladenie (state space models); N - naivný model; AE - ARIMA + Exponenciálne vyhladenie (priemer); s~- so~sezónnosťou; (s) - so~sezónnosťou pre každý model v~bunke; w - posuvné okno.}
     \label{tab:mase_2nd_stage}
 \end{table}
 
-Tabuľka~\ref{tab:mase_2nd_stage} zobrazuje výsledky priemerných hodnôt MASE pre predpovede na 2, 5 a 10 krokov vypočítané pre 16 časových radov. V tejto tabuľke sú uvedené významné časové rady. Výsledky z druhej fázy hodnotenia výskumu potvrdzujú zistenia z prvej fázy. Najlepším spôsobom sa zdá byť kombinácia (priemer) modelov ARIMA a Exponenciálneho vyhladzovania. Hoci metódy s posuvným oknom nemajú najlepšie výsledky vo všetkých prípadoch (16 časový radov), ich výsledky v priemernej hodnote MASE sú blízko najlepšej metóde.
+Tabuľka~\ref{tab:mase_2nd_stage} zobrazuje výsledky priemerných hodnôt MASE pre predpovede na 2, 5 a 10 krokov vypočítané pre 16 časových radov. V~tejto tabuľke sú uvedené významné časové rady. Výsledky z~druhej fázy hodnotenia výskumu potvrdzujú zistenia z~prvej fázy. Najlepším spôsobom sa zdá byť kombinácia (priemer) modelov ARIMA a Exponenciálneho vyhladzovania. Hoci metódy s~posuvným oknom nemajú najlepšie výsledky vo~všetkých prípadoch (16 časový radov), ich výsledky v~priemernej hodnote MASE sú blízko najlepšej metóde.
 
-Príklad použitia predikčnej metódy založenej na časových radoch je uvedený na obrázkoch~\ref{fig:forecast_attempt_login} a na obrázku~\ref{fig:forecast_attempt_exploit} vidíme jedno-krokové predpovede založené na kombinácii ARIMA a ETS (30 minútová časová jednotka) pre atribút "Kategória, pokus o prihlásenie" (Obrázok~\ref{fig:forecast_attempt_login}) a pre atribút "Kategória, pokus o prienik do zariadenia" (Obrázok~\ref{fig:forecast_attempt_exploit}). Tieto dve kategórie bezpečnostných upozornení ukazujú rozdiel medzi časovými radmi na základe bezpečnostných údajov, ktoré by sme mali zvážiť. Obidva časové rady majú relatívne dostatočný počet údajov pokus o prihlásenie - 46~709~771 (7,74~\% z celkového počtu udalostí) a pokus o prienik - 27~695~575 (4,59~\% z celkového počtu udalostí). Rozdiel spočíva v povahe údajov. Druhý časový rad je ťažko predvídateľný~\cite{hendry1995dynamic} (môžete vidieť, že predpovede sú mnohokrát ďaleko od skutočných hodnôt), pretože to vyzerá ako biely šum (proces náhodnej pochôdzky). V takejto situácii je ťažké nájsť niečo spoľahlivé a lepšie ako naivné prognostické metódy. Kvôli chýbajúcej korelačnej štruktúre alebo iným vzorkám, ktoré by mohli byť zachytené sofistikovanými modelmi. Naopak, časové rady na obrázku~\ref{fig:forecast_attempt_login} ukazujú nejakú štruktúru a predpovede sú lepšie v porovnaní s predchádzajúcim prípadom.
+Príklad použitia predikčnej metódy založenej na časových radoch je uvedený na obrázkoch~\ref{fig:forecast_attempt_login} a na obrázku~\ref{fig:forecast_attempt_exploit} vidíme jedno-krokové predpovede založené na kombinácii ARIMA a ETS (30 minútová časová jednotka) pre atribút "Kategória, pokus o prihlásenie" (Obrázok~\ref{fig:forecast_attempt_login}) a pre atribút "Kategória, pokus o prienik do~zariadenia" (Obrázok~\ref{fig:forecast_attempt_exploit}). Tieto dve kategórie bezpečnostných upozornení ukazujú rozdiel medzi časovými radmi na základe bezpečnostných údajov, ktoré by sme mali zvážiť. Obidva časové rady majú relatívne dostatočný počet údajov pokus o prihlásenie - 46~709~771 (7,74~\% z~celkového počtu udalostí) a pokus o prienik - 27~695~575 (4,59~\% z~celkového počtu udalostí). Rozdiel spočíva v~povahe údajov. Druhý časový rad je ťažko predvídateľný~\cite{hendry1995dynamic} (môžete vidieť, že predpovede sú mnohokrát ďaleko od~skutočných hodnôt), pretože to vyzerá ako biely šum (proces náhodnej pochôdzky). V~takejto situácii je ťažké nájsť niečo spoľahlivé a lepšie ako naivné prognostické metódy. Kvôli chýbajúcej korelačnej štruktúre alebo iným vzorkám, ktoré by mohli byť zachytené sofistikovanými modelmi. Naopak, časové rady na obrázku~\ref{fig:forecast_attempt_login} ukazujú nejakú štruktúru a predpovede sú lepšie v~porovnaní s~predchádzajúcim prípadom.
 
 \begin{figure}[h]
   \centering
@@ -729,17 +786,17 @@ Príklad použitia predikčnej metódy založenej na časových radoch je uveden
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.7\textwidth]{images/item62_1step_forecasts_new.eps}
-  \caption{Jedno-kroková predikcia atribútu "Kategória pokus o prienik do zariadenia". }
+  \caption{Jedno-kroková predikcia atribútu "Kategória pokus o prienik do~zariadenia". }
   \label{fig:forecast_attempt_exploit}
 \end{figure}
 
 \section{Výsledky}
 
 % ------------- Seasonality  -----------------------------
-Ako je uvedené vyššie, sezónnosť znamená cykly, ktoré sa pravidelne opakujú v priebehu času. Vybrali sme metódy ETS a ARIMA, pretože dokážu odrážať sezónnosť údajov. Domnievame sa, že sezónnosť sa nemusí brať do úvahy, pretože vzory v údajoch (počet bezpečnostných udalostí) sa v priebehu času neopakujú pravidelne (iba nepravidelne), ale závisia od iných faktorov. Ako ukazujú výsledky, najlepšie hodnoty pre jednotlivé predpovede sa vždy dosahujú metódou v oboch jeho formách - bez ohľadu na sezónnosť. Z tohto hľadiska môžeme konštatovať, že v časových radoch založených iba na celkovom počte útokov nehrá sezónnosť v prognóze dôležitú úlohu.
+Ako je uvedené vyššie, sezónnosť znamená cykly, ktoré sa pravidelne opakujú v~priebehu času. Vybrali sme metódy ETS a ARIMA, pretože dokážu odrážať sezónnosť údajov. Domnievame sa, že sezónnosť sa nemusí brať do~úvahy, pretože vzory v~údajoch (počet bezpečnostných udalostí) sa v~priebehu času neopakujú pravidelne (iba nepravidelne), ale závisia od~iných faktorov. Ako ukazujú výsledky, najlepšie hodnoty pre jednotlivé predpovede sa vždy dosahujú metódou v~oboch jeho formách - bez ohľadu na sezónnosť. Z tohto hľadiska môžeme konštatovať, že v~časových radoch založených iba na celkovom počte útokov nehrá sezónnosť v~prognóze dôležitú úlohu.
 
 % ------------- Rolling window  -----------------------------
-Z našich výsledkov (tabuľka~\ref{tab:mase} a tabuľka~\ref{tab:avg_95}) vyplýva, že najúčinnejšie prístupy k predikcii boli tie, ktoré používali techniku tzv. posuvného okna. Je to dobrý výsledok, pretože z praktického hľadiska nie je potrebné uchovávať celý súbor údajov v pamäti a nie je potrebné prispôsobovať modely, robiť výpočty a predikcie pomocou celej dátovej sady od začiatku. Má zmysel nájsť primerane veľké okno, ktoré je zvyčajne oveľa kratšie ako dĺžka pôvodnej dátovej sady. To môže byť opäť výhodou, pokiaľ ide o predikcie v reálnom čase. V našej štúdii sme považovali dĺžku okna za 80~\% mesačných údajov (časová jednotka - 30 min.) Alebo 80~\% dvojmesačných údajov (časová jednotka - 60 min.).
+Z našich výsledkov (tabuľka~\ref{tab:mase} a tabuľka~\ref{tab:avg_95}) vyplýva, že najúčinnejšie prístupy k~predikcii boli tie, ktoré používali techniku tzv. posuvného okna. Je to dobrý výsledok, pretože z~praktického hľadiska nie je potrebné uchovávať celý súbor údajov v~pamäti a nie je potrebné prispôsobovať modely, robiť výpočty a predikcie pomocou celej dátovej sady od~začiatku. Má zmysel nájsť primerane veľké okno, ktoré je zvyčajne oveľa kratšie ako dĺžka pôvodnej dátovej sady. To môže byť opäť výhodou, pokiaľ ide o predikcie v~reálnom čase. V~našej štúdii sme považovali dĺžku okna za 80~\% mesačných údajov (časová jednotka - 30 min.) Alebo 80~\% dvojmesačných údajov (časová jednotka - 60 min.).
 
 %-------------------------------------------------------
 % Research questions - discussion
@@ -747,23 +804,28 @@ Z našich výsledkov (tabuľka~\ref{tab:mase} a tabuľka~\ref{tab:avg_95}) vypl�
 
 \zaver
 
-Mať prehľad o kybernetickej situácii v počítačovej sieti je stále dôležitejšie. Vďaka prehľadu je možné proaktívne reagovať na nové bezpečnostné ale aj výkonnostné problémy. Táto práca sa venuje najmä kybernetickej situácii v počítačovej sieti. Analyzujeme dáta získavané z produkčných sietí formou bezpečnostných udalostí. Udalosti sú vytvárané IDS sondami, analýzou logov a pod. 
+Mať prehľad o kybernetickej situácii v~počítačovej sieti je stále dôležitejšie. Vďaka prehľadu je možné proaktívne reagovať na nové bezpečnostné ale aj výkonnostné problémy. Táto práca sa venuje najmä kybernetickej situácii v~počítačovej sieti. Analyzujeme dáta získavané z~produkčných sietí formou bezpečnostných udalostí. Udalosti sú vytvárané IDS sondami, analýzou logov a pod. 
 
-V práci sme sa zamerali na povahu neustále generovaných a distribuovaných údajov čo časovo nenáročné operácie pre spracovanie údajov. Rozhodli sme sa ísť cestou časových radov. Pre distribúciu bezpečnostných údajov sme vybrali systém Apache Kafka. Údaje v prvom kroku spracovávame manuálne aby sme vybrali atribúty pre, ktoré je zaujímavé generovať časové rady. Viac o výbere atribútov píšeme v podkapitole~\ref{c1_metodologia}. Pri štúdii uvedenej v parciálnych výsledkov sme vybrali 21 atribútov podľa, ktorých boli vygenerované časové rady z bezpečnostných udalostí. Ďalej sa v práci venujeme predikcii časových radov a metrikám, pomocou, ktorých dokážeme oprávnene ohodnotiť úspešnosť predikčných modelov. V rámci štúdie uvedenej v tretej kapitole sme sme časové rady predikovali pomocou modelov ARIMA a Exponenciálneho vyrovnávania. Analýzou časových radov sme dospeli k testovaniu predikčných modelov s alebo bez podpory pre sezónnosť. Ukázalo sa, že pre časové rady vzniknuté atribútom celkového počtu udalostí nevykazujú sezónnosť, naopak viac detailnejšie atribúty to môže byť inak.
+V práci sme sa zamerali na povahu neustále generovaných a distribuovaných údajov čo časovo nenáročné operácie pre spracovanie údajov. Rozhodli sme sa ísť cestou časových radov. Pre distribúciu bezpečnostných údajov sme vybrali systém Apache Kafka. Údaje v~prvom kroku spracovávame manuálne aby sme vybrali atribúty pre, ktoré je zaujímavé generovať časové rady. Viac o výbere atribútov píšeme v~podkapitole~\ref{c1_metodologia}. Pri štúdii uvedenej v~parciálnych výsledkov sme vybrali 21 atribútov podľa, ktorých boli vygenerované časové rady z~bezpečnostných udalostí. Ďalej sa v~práci venujeme predikcii časových radov a metrikám, pomocou, ktorých dokážeme oprávnene ohodnotiť úspešnosť predikčných modelov. V~rámci štúdie uvedenej v~tretej kapitole sme sme časové rady predikovali pomocou modelov ARIMA a Exponenciálneho vyrovnávania. Analýzou časových radov sme dospeli k~testovaniu predikčných modelov s~alebo bez podpory pre sezónnosť. Ukázalo sa, že pre časové rady vzniknuté atribútom celkového počtu udalostí nevykazujú sezónnosť, naopak viac detailnejšie atribúty to môže byť inak.
 
-V práci chceme dosiahnuť riešenie fungujúce v nepretržitej prevádzke a preto sme predikčné algoritmy analyzovali v dvoch prístupoch: klasickom a s posuvným oknom. Prístup posuvného okna je praktickejší pre požadované využitie pre menšiu časovú a pamäťovú náročnosť. V štúdii uvedenej v tretej kapitole sa ukázalo, že použitím posuvného okna boli predikcie najúspešnejšie.
+V práci chceme dosiahnuť riešenie fungujúce v~nepretržitej prevádzke a preto sme predikčné algoritmy analyzovali v~dvoch prístupoch: klasickom a s~posuvným oknom. Prístup posuvného okna je praktickejší pre požadované využitie pre menšiu časovú a pamäťovú náročnosť. V~štúdii uvedenej v~tretej kapitole sa ukázalo, že použitím posuvného okna boli predikcie najúspešnejšie.
 
-\bibliographystyle{ieeetr}
-\bibliography{dp} %berie sa z dp.bib
+\bibliography{dp} %berie sa z~dp.bib
 %
 %
 \prilohy
+
+\textbf{Príloha A:} Zoznam publikácii \\
+\textbf{Príloha B:} P. Sokol, P. Pekarčik, and T. Bajtoš. Data collection and data analysis in honeypots and honeynets. In \textit{Proceedings of the Security and Protection of Information. University of Defence}, 2015. \\
+\textbf{Príloha C:} P. Pekarčík, T. Kekeňák, P. Sokol, and T. Mézešová. Real-time processing of cybersecurity system data for attacker profiling. In \textit{2019 IEEE 15th International Scientific Conference on Informatics}, pages 207–212, 2019. \\
+\textbf{Príloha D:} P. Pekarčík, A. Gajdoš and P. Sokol. Forecasting security alerts based on time series. In \textit{15th International Conference on Hybrid Artificial Intelligence Systems (HAIS’20)}, accepted, 2020.
+
 \priloha{Zoznam publikácií autora}
 
 \begin{enumerate}
 \item P. Sokol, P. Pekarčik, and T. Bajtoš. Data collection and data analysis in honeypots and honeynets. In \textit{Proceedings of the Security and Protection of Information. University of Defence}, 2015.
 
-\item P. Pekarčík. Spracovania kybernetických bezpečnostných údajov v reálnom čase. In \textit{Zborník príspevkov zo 6. ročníka Jarnej internacializovanej školy doktorandov UPJŠ}, 2019.
+\item P. Pekarčík. Spracovania kybernetických bezpečnostných údajov v~reálnom čase. In \textit{Zborník príspevkov zo~6. ročníka Jarnej internacializovanej školy doktorandov UPJŠ}, 2019.
 
 \item E. Marková, P. Pekarčík, T. Bajtoš and P. Sokol. Malicious emails prevention system (MEPS). In \textit{International workshop: Data protection in real-time}, 2019.
 
@@ -774,6 +836,10 @@ V práci chceme dosiahnuť riešenie fungujúce v nepretržitej prevádzke a pre
 % \item E. Marková, T. Bajtoš, P. Sokol, T. Mézešová and P. Pekarčík. Classification of malicious emails. In \textit{JOURNAL OF INTERNATIONAL STUDIES (JOIS)}, accepted, 2020.
 
 \end{enumerate}
+
+%\includepdf[pages=-]{priloha/clanok-DataCollection1.pdf}
+%\includepdf[pages=-]{priloha/clanok-Profiling.pdf}
+%\includepdf[pages=-]{priloha/clanok-HAIS.pdf}
 
 
 \end{document}
