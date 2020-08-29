@@ -56,8 +56,6 @@
 
 \klucoveslova{kybernetická bezpečnosť, povedomie o~situácii v~sieti, časové rady, predikcia}
 
-\bibliographystyle{alpha}
-
 \begin{document}
 \maketitle
 %\newpage
@@ -95,7 +93,7 @@ Automatizácia a spracovanie údajov v~rámci spoločností sa stali bežnou sú
 
 Spolu s~príchodom prvých incidentov v~spoločnostiach sa myslenie začína meniť. Začne sa nákupom antivírusových systémov, ktoré obránia zariadenia voči už známym zraniteľnostiam. To však nie je všemocná zbraň a incidenty budú naďalej, len sofistikovanejšie. Spoločnosti to postupne prevedie dlhým bezpečnostným procesom počas, ktorého si musia vybudovať mechanizmus zbierania rôznych informácii s~cieľom získania prehľadu o situácii v~ich počítačovej sieti (angl. situation awereness). Rýchlo po vybudovaní budú potrební zamestnanci, ktorí budú tento prehľad sledovať a v~prípade podozrivej situácie v~istej časti siete, upozornia lokálnych administrátorov alebo používateľov. V~podstate si spoločnosť postupne vybuduje vlastné stredisko pre bezpečnosť ich počítačovej siete (angl. Security Operations Centre). Pri náraste siete sa však zvyšuje aj tok údajov, ktoré cez toto stredisko bude permanentne prechádzať. Kým ešte pri malom toku údajov to boli ešte zamestnanci schopní manuálne analyzovať pri zvyšujúcom toku môžu rýchlo stratiť prehľad o situácii. Tu vznikajú otázky ako máme tok údajov sledovať, aké informácie máme sledovať a ako ich sledovanie zautomatizovať?
 
-Pod tokom údajov v~tomto kontexte rozumieme hlavne (1) udalosti zo~zariadení v~sieti (servery, smerovače, prepínače, aplikácie, webové servery, dátové úložiská, IDS sondy a pod.) a (2) vyťaženie zariadení (aktuálny prenos po sieti, vyťaženie procesora, vyťaženie pamäte a pod.)~ˇ\cite{kent2016cyber}. Pre zamestnancov je určite jednoduchšie kontrolovať vyťaženie zo~zariadení pretože tieto údaje je jednoduché preniesť do~vizuálneho prehľadu v~podobe grafov. S~udalosťami zo~zariadení už môže byť problém, pretože obsahujú všetky informácie o situácii v~sieti. Ak si predstavíme udalosti webového servera, ktorý za hodinu má milión dopytov od~zamestnancov firmy, tak bude obsahovať minimálne rovnaký počet záznamov. Udalosti sú však veľmi cenné už pri hľadaní konkrétnych problémov, ak potrebujeme zistiť postup útočníka a vieme napríklad kedy alebo z~akej IP adresy útok začal. 
+Pod tokom údajov v~tomto kontexte rozumieme hlavne (1) udalosti zo~zariadení v~sieti (servery, smerovače, prepínače, aplikácie, webové servery, dátové úložiská, IDS sondy a pod.) a (2) vyťaženie zariadení (aktuálny prenos po sieti, vyťaženie procesora, vyťaženie pamäte a pod.)~\cite{kent2016cyber}. Pre zamestnancov je určite jednoduchšie kontrolovať vyťaženie zo~zariadení pretože tieto údaje je jednoduché preniesť do~vizuálneho prehľadu v~podobe grafov. S~udalosťami zo~zariadení už môže byť problém, pretože obsahujú všetky informácie o situácii v~sieti. Ak si predstavíme udalosti webového servera, ktorý za hodinu má milión dopytov od~zamestnancov firmy, tak bude obsahovať minimálne rovnaký počet záznamov. Udalosti sú však veľmi cenné už pri hľadaní konkrétnych problémov, ak potrebujeme zistiť postup útočníka a vieme napríklad kedy alebo z~akej IP adresy útok začal. 
 
 Oblasť, ktorej sa venujeme, je automatizácia spracovania toku údajov s~prihliadnutím na fakt neustálej prevádzky. Z praxe už vieme, že pri statickej analýze toku údajov (napr. za predchádzajúci mesiac) len zistíme, že útok bol napríklad pred 30-timi dňami, kde útočník získal čo potreboval a útok už neopakoval~\cite{park2010study}. V~našej práci sa venujeme oblasti priebežnému spracovaniu (angl. real-time processing) toku údajov vo~viacerých krokoch. V~tejto práci sa hlavne venujeme udalostiam. Udalosti agregujeme v~rôznych časových oknách podľa ich kategórií, protokolov, portov, adries, sietí a vytvárame z~nich časové rady. V~prvom kroku vznikajú údaje veľmi podobné vyťaženiu zariadení a je možné tieto údaje vizuálne analyzovať v~grafoch. Skúsení sieťoví administrátori by s~takto pripravenými údajmi, po čase dokázali odhaliť rozdiely v~správaní sa ich sietí~\cite{papagiannaki2005long}.
 
@@ -603,14 +601,10 @@ Výber metódy pre výpočet chyby závisí priamo od~dátovej sady s~akou pracu
 \begin{longtable}[p]{ | p{4cm} | p{5cm} | p{5cm} | }
     \caption{Prehľad použitých metrík v literatúre.}
     \label{tab:c3_metrics}\\
-    \toprule
     \hline \textbf{Metrika} & \textbf{Zápis} & \textbf{Použitie v literatúre}\\
-    \midrule
     \endfirsthead
-    \toprule
     \hline \textbf{Metrika} & \textbf{Zápis} & \textbf{Použitie v literatúre}\\
-    \midrule
-     \endhead
+    \endhead
      \hline \textbf{MAE} - Mean Absolute Error & $${{\frac {\sum _{t=1}^{n}\left|y_{t}-\hat{y}_{t}\right|}{n}}}$$ & \cite{tang2018disclosure} \\
      \hline \textbf{RSME} - Root Mean Square Error & $${{\sqrt {\frac {\sum _{t=1}^{n}({y}_{t}-\hat{y}_{t})^{2}}{n}}}}$$ & \cite{tang2018disclosure,tang2017big,condon2008analysis} \\
      \hline \textbf{MAD} - Mean Absolute Deviation & $${{\frac {1}{n}}\sum _{t=1}^{n}{\left|{y_{t}-{\hat {y}}_{t}}\right|}}$$ & \cite{fang2019deep} \\
@@ -705,7 +699,6 @@ V druhom type krížovej validácie sme zvažovali všetky prognózy až do~druh
 \begin{table}[h]
     \centering
     \footnotesize 
-    \singlespacing 
     \begin{tabular}{|p{3cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|} \hline
         Predikcia\textbackslash Prípad & \,30/24/1\, & \,30/7/1\, & \,60/24/2\, & \,60/24/1\, & \,60/7/2\, & \,60/7/1\, \\    
         \hline\hline
@@ -732,7 +725,6 @@ Druhým prístupom k~hodnoteniu kvality predpovedí konkrétnych modelov je prie
 \begin{table}[h]
     \centering
     \footnotesize 
-    \singlespacing 
     \begin{tabular}{|p{3cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|p{1.5cm}|} \hline
         Predikcia\textbackslash Prípad & \,30/24/1\, & \,30/7/1\, & \,60/24/2\, & \,60/24/1\, & \,60/7/2\, & \,60/7/1\, \\
      \hline\hline
@@ -767,7 +759,6 @@ V druhej fáze sme testovali všetky vyššie uvedené metódy s~najlepším pr�
 \begin{table}[h]
     \centering
     \footnotesize 
-    \singlespacing 
     \begin{tabular}{|p{2cm}|p{1cm}|p{1.4cm}|p{1.2cm}|p{1.2cm}|p{1.4cm}|p{1cm}|p{1.2cm}|p{1.2cm}|} \hline
         Atribút & Count & Recon Scanning & Attempt Login & Attempt Exploit & Intrusion Botnet & Port 80 & Protocol SSH & Protocol Telnet  \\
         \hline\hline
